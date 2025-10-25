@@ -15,4 +15,4 @@ const ideaSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Idea", ideaSchema);
+module.exports = mongoose.models.Idea || mongoose.model("Idea", ideaSchema);

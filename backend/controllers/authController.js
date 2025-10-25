@@ -48,8 +48,7 @@ class AuthController {
             if (!user) {
                 // Determine role
                 const isAdmin =
-                    email.startsWith(adminEmail) &&
-                    organization.admins.length === 0;
+                    email.startsWith(adminEmail) && !organization.admin;
                 const role = isAdmin ? "admin" : "participant";
 
                 user = await User.create({
@@ -62,7 +61,7 @@ class AuthController {
 
                 // Add to org
                 organization.members.push(user._id);
-                if (isAdmin) organization.admins.push(user._id);
+                if (isAdmin) organization.admin = user._id;
                 await organization.save();
             }
 
