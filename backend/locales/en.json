@@ -19,5 +19,28 @@
         "deleted_successfully": "Announcement deleted successfully",
         "delete_failed": "Failed to delete announcement",
         "not_found": "Announcement not found"
+    },
+    {
+        "idea": {
+            "get_failed": "Failed to fetch public ideas",
+            "organization_not_found": "User organization not found",
+            "submitted_successfully": "Idea submitted successfully",
+            "submission_failed": "Idea submission failed",
+            "get_my_failed": "Failed to fetch your ideas",
+            "updated_successfully": "Idea updated successfully",
+            "update_failed": "Failed to update idea",
+            "deleted_successfully": "Idea deleted successfully",
+            "delete_failed": "Failed to delete idea"
+        }
+    },
+    {
+        "user": {
+            "fetch_success": "Users fetched successfully",
+            "fetch_failed": "Failed to fetch users",
+            "not_found": "User not found",
+            "cannot_modify_admin": "Cannot modify admin role",
+            "role_updated_successfully": "User role updated successfully",
+            "role_update_failed": "Failed to update user role"
+        }
     }
 }

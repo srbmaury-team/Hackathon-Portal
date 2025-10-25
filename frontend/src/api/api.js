@@ -95,4 +95,12 @@ export const deleteAnnouncement = async (id, token) => {
     return res.data;
 };
 
+// Fetch Users (for User Management)
+export const getUsers = async (token) => {
+    const res = await API.get("/users", {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+}
+
 export default API;

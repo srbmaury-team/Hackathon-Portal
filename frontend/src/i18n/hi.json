@@ -12,6 +12,7 @@
     "announcements": "घोषणाएँ",
     "submit_idea": "विचार सबमिट करें",
     "public_ideas": "सार्वजनिक विचार",
+    "members": "सदस्य",
     "teams": "टीमें",
     "my_teams": "मेरी टीमें",
     "my_participation": "मेरी भागीदारी",
@@ -79,5 +80,25 @@
     "system": "सिस्टम",
     "language": "भाषा",
     "notifications": "सूचनाएं सक्षम करें"
+  },
+  "user_management": {
+    "title": "उपयोगकर्ता प्रबंधन",
+    "name": "नाम",
+    "email": "ईमेल",
+    "organization": "संगठन",
+    "role": "भूमिका",
+    "change_success": "भूमिका सफलतापूर्वक अपडेट की गई",
+    "change_failed": "भूमिका अपडेट करने में विफल",
+    "change_role_title": "{{name}} की भूमिका बदलें",
+    "select_new_role": "नई भूमिका चुनें",
+    "fetch_failed": "उपयोगकर्ताओं को लाने में विफल",
+    "no_users": "कोई उपयोगकर्ता नहीं मिला"
+  },
+  "roles": {
+    "participant": "प्रतिभागी",
+    "organizer": "आयोजक",
+    "judge": "न्यायाधीश",
+    "mentor": "मार्गदर्शक",
+    "admin": "प्रशासक"
   }
 }

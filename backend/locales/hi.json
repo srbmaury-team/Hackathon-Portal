@@ -19,5 +19,18 @@
         "deleted_successfully": "घोषणा सफलतापूर्वक हटाई गई",
         "delete_failed": "घोषणा हटाने में विफलता",
         "not_found": "घोषणा नहीं मिली"
+    },
+    {
+        "idea": {
+            "get_failed": "सार्वजनिक विचार लाने में विफल",
+            "organization_not_found": "उपयोगकर्ता का संगठन नहीं मिला",
+            "submitted_successfully": "विचार सफलतापूर्वक प्रस्तुत किया गया",
+            "submission_failed": "विचार प्रस्तुत करना विफल रहा",
+            "get_my_failed": "आपके विचार लाने में विफल",
+            "updated_successfully": "विचार सफलतापूर्वक अपडेट किया गया",
+            "update_failed": "विचार अपडेट करना विफल रहा",
+            "deleted_successfully": "विचार सफलतापूर्वक हटाया गया",
+            "delete_failed": "विचार हटाना विफल रहा"
+        }
     }
 }

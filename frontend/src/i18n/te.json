@@ -12,6 +12,7 @@
     "announcements": "అంచనాలు",
     "submit_idea": "ఆలోచన సబ్మిట్ చేయండి",
     "public_ideas": "సార్వజనిక ఆలోచనలు",
+    "members": "సభ్యులు",
     "teams": "టీమ్‌లు",
     "my_teams": "నా టీమ్‌లు",
     "my_participation": "నా పాల్గొనడం",
@@ -79,5 +80,25 @@
     "system": "సిస్టమ్",
     "language": "భాష",
     "notifications": "నోటిఫికేషన్స్ ఎనేబుల్ చేయండి"
+  },
+  "user_management": {
+    "title": "వినియోగదారు నిర్వహణ",
+    "name": "పేరు",
+    "email": "ఈమెయిల్",
+    "organization": "సంస్థ",
+    "role": "పాత్ర",
+    "change_success": "పాత్ర విజయవంతంగా నవీకరించబడింది",
+    "change_failed": "పాత్ర నవీకరణ విఫలమైంది",
+    "change_role_title": "{{name}} యొక్క పాత్ర మార్చండి",
+    "select_new_role": "కొత్త పాత్రను ఎంచుకోండి",
+    "fetch_failed": "వినియోగదారులను తెచ్చేలోపం",
+    "no_users": "ఏ వినియోగదారులూ లేవు"
+  },
+  "roles": {
+    "participant": "పాల్గొనేవారు",
+    "organizer": "నిర్వాహకుడు",
+    "judge": "న్యాయమూర్తి",
+    "mentor": "మార్గదర్శకుడు",
+    "admin": "నిర్వాహక అధికారి"
   }
 }
