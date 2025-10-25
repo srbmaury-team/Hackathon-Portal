@@ -1,0 +1,90 @@
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import AnnouncementCreate from "../AnnouncementCreate";
+import { vi } from "vitest";
+import * as api from "../../../api/api";
+import toast from "react-hot-toast";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../../../i18n/i18n";
+
+// Mock API
+vi.mock("../../../api/api", () => ({
+  createAnnouncement: vi.fn(),
+}));
+
+// Mock react-hot-toast
+vi.mock("react-hot-toast", () => ({
+  default: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+// Mock react-markdown-editor-lite properly
+vi.mock("react-markdown-editor-lite", () => {
+  return {
+    default: ({ value, onChange, "data-testid": testId }) => (
+      <textarea
+        data-testid={testId}
+        value={value}
+        onChange={(e) => onChange({ text: e.target.value })}
+      />
+    ),
+  };
+});
+
+describe("AnnouncementCreate component", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    render(
+      <I18nextProvider i18n={i18n}>
+        <AnnouncementCreate />
+      </I18nextProvider>
+    );
+  });
+
+  it("shows error toast when fields are empty", async () => {
+    const createBtn = screen.getByRole("button", { name: /create/i });
+    fireEvent.click(createBtn);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("All fields are required");
+    });
+  });
+
+  it("can fill title and message", async () => {
+    const titleInput = screen.getByRole("textbox", { name: /title/i });
+    fireEvent.change(titleInput, { target: { value: "Title" } });
+
+    const messageTextarea = screen.getByTestId("announcement-message");
+    fireEvent.change(messageTextarea, { target: { value: "Message" } });
+
+    expect(titleInput).toHaveValue("Title");
+    expect(messageTextarea).toHaveValue("Message");
+  });
+
+  it("shows error toast when API fails", async () => {
+    // Fill title
+    const titleInput = screen.getByRole("textbox", { name: /title/i });
+    fireEvent.change(titleInput, { target: { value: "Title" } });
+
+    // Fill message
+    const messageTextarea = screen.getByTestId("announcement-message");
+    fireEvent.change(messageTextarea, { target: { value: "Message" } });
+
+    // Mock API failure
+    api.createAnnouncement.mockRejectedValueOnce({
+      response: { data: { message: "Failed to create announcement" } },
+    });
+
+    // Click create
+    const createBtn = screen.getByRole("button", { name: /create/i });
+    fireEvent.click(createBtn);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Failed to create announcement"
+      );
+    });
+  });
+});

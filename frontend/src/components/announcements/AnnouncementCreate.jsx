@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, TextField, Box, Typography } from "@mui/material";
 import MdEditor from "react-markdown-editor-lite";
 import MarkdownIt from "markdown-it";
@@ -8,6 +8,19 @@ import { createAnnouncement } from "../../api/api";
 import toast from "react-hot-toast";
 
 const mdParser = new MarkdownIt();
+
+// Wrapper to make MdEditor testable
+const TestableMdEditor = ({ value, onChange, "data-testid": testId }) => {
+    return (
+        <MdEditor
+            value={value}
+            renderHTML={(text) => mdParser.render(text)}
+            onChange={({ text }) => onChange(text)}
+            style={{ height: "300px" }}
+            data-testid={testId}
+        />
+    );
+};
 
 const AnnouncementCreate = ({ onCreated }) => {
     const { t } = useTranslation();
@@ -37,19 +50,22 @@ const AnnouncementCreate = ({ onCreated }) => {
     return (
         <Box sx={{ mb: 4 }}>
             <Typography variant="h6">{t("announcement.create_announcement")}</Typography>
+
             <TextField
                 label={t("announcement.title")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 fullWidth
                 sx={{ mb: 2 }}
+                inputProps={{ "aria-label": t("announcement.title") }}
             />
-            <MdEditor
-                style={{ height: "300px" }}
-                renderHTML={(text) => mdParser.render(text)}
+
+            <TestableMdEditor
                 value={message}
-                onChange={({ text }) => setMessage(text)}
+                onChange={setMessage}
+                data-testid="announcement-message"
             />
+
             <Button
                 variant="contained"
                 color="primary"

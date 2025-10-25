@@ -1,3 +1,4 @@
+import React from "react";
 import { Typography, Box, Paper } from "@mui/material";
 import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 import { useTranslation } from "react-i18next";

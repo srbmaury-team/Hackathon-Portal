@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
     Card,
     CardContent,
@@ -115,13 +115,14 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
                         {announcement.title}
                     </Typography>
                     <Box>
+
                         {canEdit && (
-                            <IconButton size="small" sx={{ color: "white" }} onClick={() => setEditing(true)}>
+                            <IconButton aria-label="edit" size="small" sx={{ color: "white" }} onClick={() => setEditing(true)}>
                                 <EditIcon />
                             </IconButton>
                         )}
                         {canDelete && (
-                            <IconButton size="small" sx={{ color: "white" }} onClick={() => setConfirmOpen(true)}>
+                            <IconButton aria-label="delete" size="small" sx={{ color: "white" }} onClick={() => setConfirmOpen(true)}>
                                 <DeleteIcon />
                             </IconButton>
                         )}

@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo, useEffect } from "react";
+import React, { createContext, useState, useMemo, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import i18n from "../i18n/i18n"; // ✅ import i18n instance

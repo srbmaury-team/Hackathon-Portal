@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Typography } from "@mui/material";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { useTranslation } from "react-i18next";

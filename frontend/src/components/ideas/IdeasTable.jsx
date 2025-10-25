@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper,
     IconButton, Dialog, DialogTitle, DialogContent, DialogActions,
@@ -48,7 +48,7 @@ const IdeasTable = ({ ideas = [], filter, onIdeaUpdated, showActions = false }) 
         }
     };
 
-    const filteredIdeas = 
+    const filteredIdeas =
         filter === "all"
             ? ideas
             : (filter === "mine"
@@ -88,11 +88,19 @@ const IdeasTable = ({ ideas = [], filter, onIdeaUpdated, showActions = false }) 
                                 <TableCell align="right">
                                     {showActions ? (
                                         <>
-                                            <IconButton color="primary" onClick={() => handleEditClick(idea)}>
-                                                <Edit fontSize="small" />
+                                            <IconButton
+                                                aria-label={t("idea.edit")}
+                                                onClick={() => handleEditClick(idea)}
+                                                data-testid="edit-button"
+                                            >
+                                                <Edit />
                                             </IconButton>
-                                            <IconButton color="error" onClick={() => handleDelete(idea._id)}>
-                                                <Delete fontSize="small" />
+                                            <IconButton
+                                                aria-label={t("idea.delete")}
+                                                onClick={() => handleDelete(idea._id)}
+                                                data-testid="delete-button"
+                                            >
+                                                <Delete color="error" />
                                             </IconButton>
                                         </>
                                     ) : (
