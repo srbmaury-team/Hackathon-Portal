@@ -49,7 +49,7 @@ describe("AnnouncementItem component", () => {
 
   test("opens edit mode when edit button is clicked", () => {
     render(<AnnouncementItem announcement={announcement} user={user} />);
-    const editButton = screen.getByLabelText("edit");
+    const editButton = screen.getByTestId("EditIcon").closest("button");
     fireEvent.click(editButton);
 
     expect(screen.getByDisplayValue("Test Announcement")).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe("AnnouncementItem component", () => {
     api.updateAnnouncement.mockResolvedValue({});
     render(<AnnouncementItem announcement={announcement} user={user} />);
 
-    fireEvent.click(screen.getByLabelText("edit"));
+    fireEvent.click(screen.getByTestId("EditIcon").closest("button"));
 
     const titleInput = screen.getByDisplayValue("Test Announcement");
     fireEvent.change(titleInput, { target: { value: "Updated Title" } });
@@ -82,7 +82,7 @@ describe("AnnouncementItem component", () => {
     api.deleteAnnouncement.mockResolvedValue({});
     render(<AnnouncementItem announcement={announcement} user={user} />);
 
-    fireEvent.click(screen.getByLabelText("delete"));
+    fireEvent.click(screen.getByTestId("DeleteIcon").closest("button"));
     expect(screen.getByText("announcement.confirm_delete")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("announcement.delete"));
@@ -97,7 +97,7 @@ describe("AnnouncementItem component", () => {
     api.updateAnnouncement.mockRejectedValue({ response: { data: { message: "Failed!" } } });
     render(<AnnouncementItem announcement={announcement} user={user} />);
 
-    fireEvent.click(screen.getByLabelText("edit"));
+    fireEvent.click(screen.getByTestId("EditIcon").closest("button"));
     fireEvent.click(screen.getByText("announcement.update"));
 
     await waitFor(() => {
@@ -109,7 +109,7 @@ describe("AnnouncementItem component", () => {
     api.deleteAnnouncement.mockRejectedValue({ response: { data: { message: "Delete Failed!" } } });
     render(<AnnouncementItem announcement={announcement} user={user} />);
 
-    fireEvent.click(screen.getByLabelText("delete"));
+    fireEvent.click(screen.getByTestId("DeleteIcon").closest("button"));
     fireEvent.click(screen.getByText("announcement.delete"));
 
     await waitFor(() => {

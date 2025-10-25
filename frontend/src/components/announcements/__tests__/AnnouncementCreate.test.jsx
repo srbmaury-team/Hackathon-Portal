@@ -20,14 +20,15 @@ vi.mock("react-hot-toast", () => ({
   },
 }));
 
-// Mock react-markdown-editor-lite properly
-vi.mock("react-markdown-editor-lite", () => {
+// Mock @uiw/react-md-editor
+vi.mock("@uiw/react-md-editor", () => {
   return {
-    default: ({ value, onChange, "data-testid": testId }) => (
+    default: ({ value, onChange }) => (
       <textarea
-        data-testid={testId}
+        data-testid="md-editor"
         value={value}
-        onChange={(e) => onChange({ text: e.target.value })}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label="Markdown Editor"
       />
     ),
   };
@@ -56,7 +57,7 @@ describe("AnnouncementCreate component", () => {
     const titleInput = screen.getByRole("textbox", { name: /title/i });
     fireEvent.change(titleInput, { target: { value: "Title" } });
 
-    const messageTextarea = screen.getByTestId("announcement-message");
+    const messageTextarea = screen.getByTestId("md-editor");
     fireEvent.change(messageTextarea, { target: { value: "Message" } });
 
     expect(titleInput).toHaveValue("Title");
@@ -69,7 +70,7 @@ describe("AnnouncementCreate component", () => {
     fireEvent.change(titleInput, { target: { value: "Title" } });
 
     // Fill message
-    const messageTextarea = screen.getByTestId("announcement-message");
+    const messageTextarea = screen.getByTestId("md-editor");
     fireEvent.change(messageTextarea, { target: { value: "Message" } });
 
     // Mock API failure
