@@ -1,0 +1,23 @@
+{
+    "auth": {
+        "organization_not_onboarded": "आपका संगठन अभी प्लेटफ़ॉर्म पर पंजीकृत नहीं है। कृपया अपने एडमिन से पहले रजिस्टर करने के लिए कहें।",
+        "google_login_failed": "गूगल लॉगिन विफल हुआ",
+        "login_success": "लॉगिन सफल हुआ",
+        "unauthorized": "अनधिकृत पहुँच",
+        "forbidden_role": "आपको यह कार्य करने की अनुमति नहीं है",
+        "forbidden": "आप इस संसाधन को संशोधित नहीं कर सकते",
+        "user_not_found": "उपयोगकर्ता नहीं मिला",
+        "no_token": "टोकन प्रदान नहीं किया गया",
+        "invalid_token": "अमान्य टोकन"
+    },
+    "announcement": {
+        "created_successfully": "घोषणा सफलतापूर्वक बनाई गई",
+        "creation_failed": "घोषणा बनाने में विफलता",
+        "get_failed": "घोषणाएँ प्राप्त करने में विफलता",
+        "updated_successfully": "घोषणा सफलतापूर्वक अपडेट की गई",
+        "update_failed": "घोषणा अपडेट करने में विफलता",
+        "deleted_successfully": "घोषणा सफलतापूर्वक हटाई गई",
+        "delete_failed": "घोषणा हटाने में विफलता",
+        "not_found": "घोषणा नहीं मिली"
+    }
+}

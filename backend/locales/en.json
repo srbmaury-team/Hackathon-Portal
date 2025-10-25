@@ -1,0 +1,23 @@
+{
+    "auth": {
+        "organization_not_onboarded": "Your organization is not onboarded on the platform. Please ask your admin to register first.",
+        "google_login_failed": "Google login failed",
+        "login_success": "Login successful",
+        "unauthorized": "Unauthorized",
+        "forbidden_role": "You don't have permission to perform this action",
+        "forbidden": "You are not allowed to modify this resource",
+        "user_not_found": "User not found",
+        "no_token": "No token provided",
+        "invalid_token": "Invalid token"
+    },
+    "announcement": {
+        "created_successfully": "Announcement created successfully",
+        "creation_failed": "Failed to create announcement",
+        "get_failed": "Failed to get announcements",
+        "updated_successfully": "Announcement updated successfully",
+        "update_failed": "Failed to update announcement",
+        "deleted_successfully": "Announcement deleted successfully",
+        "delete_failed": "Failed to delete announcement",
+        "not_found": "Announcement not found"
+    }
+}
