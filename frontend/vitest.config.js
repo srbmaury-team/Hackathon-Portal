@@ -7,4 +7,8 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     include: ['src/**/*.test.{js,jsx,ts,tsx}'],
   },
+  coverage: {
+    provider: 'c8',
+    reporter: ['text', 'lcov'],
+  },
 })

@@ -5,11 +5,14 @@ class IdeaService {
     return Idea.find({ isPublic: true }).populate("submitter", "_id name").sort({ createdAt: -1 }) || [];
   }
 
-  async createIdea({ title, description, submitterId, isPublic }) {
+  async createIdea({ title, description, submitterId, isPublic, organization }) {
     if (!title || !description || typeof isPublic !== "boolean") {
       throw new Error("Title, description, and isPublic are required");
     }
-    const idea = new Idea({ title, description, submitter: submitterId, isPublic });
+    if (!organization) {
+      throw new Error("Organization is required");
+    }
+    const idea = new Idea({ title, description, submitter: submitterId, isPublic, organization });
     return idea.save();
   }
 

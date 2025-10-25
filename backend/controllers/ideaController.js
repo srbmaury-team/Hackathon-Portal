@@ -1,4 +1,5 @@
 const ideaService = require("../services/ideaService");
+const User = require("../models/User");
 
 class IdeaController {
     async getPublicIdeas(req, res) {
@@ -14,11 +15,19 @@ class IdeaController {
         try {
             const { title, description, isPublic } = req.body;
             const submitterId = req.user.id; // From JWT
+            
+            // Fetch user's organization
+            const user = await User.findById(submitterId);
+            if (!user || !user.organization) {
+                return res.status(400).json({ message: "User organization not found" });
+            }
+            
             const idea = await ideaService.createIdea({
                 title,
                 description,
                 submitterId,
                 isPublic,
+                organization: user.organization,
             });
             res.status(201).json({ message: "Idea submitted", idea });
         } catch (err) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
     Card,
     CardContent,
@@ -11,8 +11,9 @@ import {
     DialogContent,
     DialogActions,
     Button,
+    TextField,
+    useTheme,
 } from "@mui/material";
-import ReactMarkdown from "react-markdown";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
@@ -27,12 +28,16 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
     const [editedTitle, setEditedTitle] = useState(announcement.title);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const token = localStorage.getItem("token");
+    const theme = useTheme();
+    const { t } = useTranslation();
 
     const isOrganizer = user.role === "organizer";
     const isAdmin = user.role === "admin";
     const canEdit = isAdmin || (isOrganizer && announcement.createdBy._id === user._id);
     const canDelete = isAdmin || (isOrganizer && announcement.createdBy._id === user._id);
-    const { t } = useTranslation();
+    
+    // Determine color scheme based on theme
+    const colorScheme = theme.palette.mode === "dark" ? "dark" : "light";
 
     // Delete using api.js
     const handleDelete = async () => {
@@ -70,19 +75,19 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
         return (
             <Card sx={{ mb: 3, borderRadius: 3, boxShadow: 3 }}>
                 <CardContent>
-                    <Typography variant="h6" sx={{ mb: 1 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
                         {t("announcement.edit_announcement")}
                     </Typography>
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle2">{t("announcement.title")}</Typography>
-                        <input
-                            type="text"
-                            value={editedTitle}
-                            onChange={(e) => setEditedTitle(e.target.value)}
-                            style={{ width: "100%", padding: "8px", marginTop: "4px" }}
-                        />
+                    <TextField
+                        label={t("announcement.title")}
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        fullWidth
+                        sx={{ mb: 2 }}
+                    />
+                    <Box data-color-mode={colorScheme}>
+                        <MDEditor value={editedMessage} onChange={setEditedMessage} height={300} />
                     </Box>
-                    <MDEditor value={editedMessage} onChange={setEditedMessage} height={200} />
                     <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
                         <Button variant="contained" color="primary" onClick={handleUpdate}>
                             {t("announcement.update")}
@@ -115,14 +120,13 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
                         {announcement.title}
                     </Typography>
                     <Box>
-
                         {canEdit && (
-                            <IconButton aria-label="edit" size="small" sx={{ color: "white" }} onClick={() => setEditing(true)}>
+                            <IconButton size="small" sx={{ color: "white" }} onClick={() => setEditing(true)}>
                                 <EditIcon />
                             </IconButton>
                         )}
                         {canDelete && (
-                            <IconButton aria-label="delete" size="small" sx={{ color: "white" }} onClick={() => setConfirmOpen(true)}>
+                            <IconButton size="small" sx={{ color: "white" }} onClick={() => setConfirmOpen(true)}>
                                 <DeleteIcon />
                             </IconButton>
                         )}
@@ -137,8 +141,61 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
 
                     <Divider sx={{ mb: 2 }} />
 
-                    <Box sx={{ "& p": { mb: 1.5 } }}>
-                        <ReactMarkdown>{announcement.message}</ReactMarkdown>
+                    <Box 
+                        data-color-mode={colorScheme}
+                        sx={{ 
+                            "& .wmde-markdown": {
+                                backgroundColor: "transparent !important",
+                                color: "text.primary"
+                            },
+                            "& .wmde-markdown-color": {
+                                backgroundColor: "transparent !important"
+                            },
+                            "& p": { mb: 1.5 },
+                            "& h1, & h2, & h3, & h4, & h5, & h6": {
+                                color: "text.primary",
+                                mt: 2,
+                                mb: 1
+                            },
+                            "& img": { 
+                                maxWidth: "100%", 
+                                height: "auto",
+                                borderRadius: 2,
+                                mt: 1,
+                                mb: 1
+                            },
+                            "& pre": {
+                                backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e !important" : "#f5f5f5 !important",
+                                padding: 2,
+                                borderRadius: 1,
+                                overflow: "auto"
+                            },
+                            "& code": {
+                                backgroundColor: theme.palette.mode === "dark" ? "#1e1e1e" : "#f5f5f5",
+                                padding: "2px 6px",
+                                borderRadius: 1
+                            },
+                            "& a": {
+                                color: "primary.main"
+                            },
+                            "& ul, & ol": {
+                                pl: 2,
+                                mb: 1.5
+                            },
+                            "& li": {
+                                mb: 0.5
+                            },
+                            "& blockquote": {
+                                borderLeft: `4px solid ${theme.palette.primary.main}`,
+                                pl: 2,
+                                py: 1,
+                                my: 2,
+                                color: "text.secondary",
+                                backgroundColor: theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"
+                            }
+                        }}
+                    >
+                        <MDEditor.Markdown source={announcement.message} />
                     </Box>
                 </CardContent>
             </Card>
