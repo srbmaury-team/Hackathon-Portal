@@ -50,5 +50,18 @@
 	},
 	"organization": {
 		"not_found": "Organization not found"
+	},
+	"hackathon": {
+		"created_successfully": "Hackathon created successfully",
+		"creation_failed": "Failed to create hackathon",
+		"fetch_success": "Hackathons fetched successfully",
+		"fetch_failed": "Failed to fetch hackathons",
+		"not_found": "Hackathon not found",
+		"access_denied": "You do not have permission to access this hackathon",
+		"access_denied_inactive": "This hackathon is inactive and visible only to organizers and admins",
+		"updated_successfully": "Hackathon updated successfully",
+		"update_failed": "Failed to update hackathon",
+		"deleted_successfully": "Hackathon deleted successfully",
+		"delete_failed": "Failed to delete hackathon"
 	}
 }
