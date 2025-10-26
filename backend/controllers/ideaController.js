@@ -7,7 +7,7 @@ class IdeaController {
             const ideas = await ideaService.getPublicIdeas();
             res.json({ ideas });
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            res.status(500).json({ message: req.__("idea.get_failed"), error: err.message });
         }
     }
 
@@ -19,7 +19,7 @@ class IdeaController {
             // Fetch user's organization
             const user = await User.findById(submitterId);
             if (!user || !user.organization) {
-                return res.status(400).json({ message: "User organization not found" });
+                return res.status(400).json({ message: req.__("idea.organization_not_found") });
             }
             
             const idea = await ideaService.createIdea({
@@ -29,9 +29,9 @@ class IdeaController {
                 isPublic,
                 organization: user.organization,
             });
-            res.status(201).json({ message: "Idea submitted", idea });
+            res.status(201).json({ message: req.__("idea.submitted_successfully"), idea });
         } catch (err) {
-            res.status(400).json({ message: err.message });
+            res.status(400).json({ message: req.__("idea.submission_failed"), error: err.message });
         }
     }
 
@@ -40,7 +40,7 @@ class IdeaController {
             const ideas = await ideaService.getIdeasByUser(req.user.id);
             res.json({ ideas });
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            res.status(500).json({ message: req.__("idea.get_my_failed"), error: err.message });
         }
     }
 
@@ -53,9 +53,9 @@ class IdeaController {
                 ideaId,
                 { title, description, isPublic }
             );
-            res.json({ message: "Idea updated", idea: updatedIdea });
+            res.json({ message: req.__("idea.updated_successfully"), idea: updatedIdea });
         } catch (err) {
-            res.status(400).json({ message: err.message });
+            res.status(400).json({ message: req.__("idea.update_failed"), error: err.message });
         }
     }
 
@@ -63,9 +63,9 @@ class IdeaController {
         try {
             const ideaId = req.params.id;
             await ideaService.deleteIdea(req.user.id, ideaId);
-            res.json({ message: "Idea deleted" });
+            res.json({ message: req.__("idea.deleted_successfully") });
         } catch (err) {
-            res.status(400).json({ message: err.message });
+            res.status(400).json({ message: req.__("idea.delete_failed"), error: err.message });
         }
     }
 }

@@ -21,6 +21,7 @@ import {
     Menu as MenuIcon,
     Settings as SettingsIcon,
     LightbulbOutline as LightbulbOutlineIcon,
+    Person,
 } from "@mui/icons-material";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -54,6 +55,12 @@ const DashboardLayout = ({ children }) => {
             text: t("dashboard.public_ideas"),
             icon: <LightbulbOutlineIcon />,
             path: "/public-ideas",
+            roles: ["participant", "organizer", "admin", "judge", "mentor"],
+        },
+        {
+            text: t("dashboard.members"),
+            icon: <Person />,
+            path: "/members",
             roles: ["participant", "organizer", "admin", "judge", "mentor"],
         },
         {

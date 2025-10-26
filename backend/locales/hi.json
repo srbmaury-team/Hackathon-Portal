@@ -1,23 +1,54 @@
 {
-    "auth": {
-        "organization_not_onboarded": "आपका संगठन अभी प्लेटफ़ॉर्म पर पंजीकृत नहीं है। कृपया अपने एडमिन से पहले रजिस्टर करने के लिए कहें।",
-        "google_login_failed": "गूगल लॉगिन विफल हुआ",
-        "login_success": "लॉगिन सफल हुआ",
-        "unauthorized": "अनधिकृत पहुँच",
-        "forbidden_role": "आपको यह कार्य करने की अनुमति नहीं है",
-        "forbidden": "आप इस संसाधन को संशोधित नहीं कर सकते",
-        "user_not_found": "उपयोगकर्ता नहीं मिला",
-        "no_token": "टोकन प्रदान नहीं किया गया",
-        "invalid_token": "अमान्य टोकन"
-    },
-    "announcement": {
-        "created_successfully": "घोषणा सफलतापूर्वक बनाई गई",
-        "creation_failed": "घोषणा बनाने में विफलता",
-        "get_failed": "घोषणाएँ प्राप्त करने में विफलता",
-        "updated_successfully": "घोषणा सफलतापूर्वक अपडेट की गई",
-        "update_failed": "घोषणा अपडेट करने में विफलता",
-        "deleted_successfully": "घोषणा सफलतापूर्वक हटाई गई",
-        "delete_failed": "घोषणा हटाने में विफलता",
-        "not_found": "घोषणा नहीं मिली"
-    }
+	"auth": {
+		"no_token": "कोई प्रमाणीकरण टोकन प्रदान नहीं किया गया",
+		"user_not_found": "उपयोगकर्ता नहीं मिला",
+		"invalid_token": "अमान्य या समाप्त टोकन",
+		"organization_not_onboarded": "आपका संगठन अभी प्लेटफ़ॉर्म पर पंजीकृत नहीं है। कृपया एडमिन से संपर्क करें।",
+		"google_login_failed": "गूगल प्रमाणीकरण विफल",
+		"login_success": "लॉगिन सफल",
+		"forbidden": "आपको यह कार्य करने की अनुमति नहीं है",
+		"forbidden_role": "auth.forbidden_role"
+	},
+	"user": {
+		"fetch_success": "उपयोगकर्ता सफलतापूर्वक प्राप्त किए गए",
+		"fetch_failed": "उपयोगकर्ता प्राप्त करने में विफल",
+		"not_found": "उपयोगकर्ता नहीं मिला",
+		"cannot_modify_admin": "एडमिन उपयोगकर्ता की भूमिका संशोधित नहीं की जा सकती",
+		"role_updated_successfully": "उपयोगकर्ता की भूमिका सफलतापूर्वक अपडेट की गई",
+		"role_update_failed": "उपयोगकर्ता की भूमिका अपडेट करने में विफल"
+	},
+	"announcement": {
+		"all_fields_required": "शीर्षक और संदेश आवश्यक हैं",
+		"announcement_created": "घोषणा सफलतापूर्वक बनाई गई",
+		"creation_failed": "घोषणा बनाने में विफल",
+		"announcement_updated": "घोषणा सफलतापूर्वक अपडेट की गई",
+		"update_failed": "घोषणा अपडेट करने में विफल",
+		"announcement_deleted": "घोषणा सफलतापूर्वक हटाई गई",
+		"delete_failed": "घोषणा हटाने में विफल",
+		"get_failed": "घोषणाएँ प्राप्त करने में विफल",
+		"not_found": "घोषणा नहीं मिली",
+		"unauthorized": "आप यह कार्य करने के लिए अधिकृत नहीं हैं",
+		"created_successfully": "announcement.created_successfully",
+		"updated_successfully": "announcement.updated_successfully",
+		"deleted_successfully": "announcement.deleted_successfully"
+	},
+	"idea": {
+		"all_fields_required": "शीर्षक, विवरण और दृश्यता आवश्यक हैं",
+		"idea_submitted": "विचार सफलतापूर्वक प्रस्तुत किया गया",
+		"idea_submit_failed": "विचार प्रस्तुत करने में विफल",
+		"idea_updated": "विचार सफलतापूर्वक अपडेट किया गया",
+		"idea_update_failed": "विचार अपडेट करने में विफल",
+		"idea_deleted": "विचार सफलतापूर्वक हटाया गया",
+		"idea_delete_failed": "विचार हटाने में विफल",
+		"not_found": "विचार नहीं मिला",
+		"unauthorized": "आप यह कार्य करने के लिए अधिकृत नहीं हैं",
+		"submitted_successfully": "idea.submitted_successfully",
+		"updated_successfully": "idea.updated_successfully",
+		"update_failed": "idea.update_failed",
+		"deleted_successfully": "idea.deleted_successfully",
+		"delete_failed": "idea.delete_failed"
+	},
+	"organization": {
+		"not_found": "संगठन नहीं मिला"
+	}
 }
