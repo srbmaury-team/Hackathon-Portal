@@ -64,6 +64,12 @@ const DashboardLayout = ({ children }) => {
             roles: ["participant", "organizer", "admin", "judge", "mentor"],
         },
         {
+            text: t("dashboard.hackathons"),
+            icon: <EventNoteIcon />,
+            path: "/hackathons",
+            roles: ["participant", "organizer", "admin", "judge", "mentor"],
+        },
+        {
             text: t("dashboard.teams"),
             icon: <GroupIcon />,
             path: "/teams",

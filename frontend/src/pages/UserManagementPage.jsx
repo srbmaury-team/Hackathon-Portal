@@ -112,7 +112,7 @@ const UserManagementPage = () => {
     return (
         <DashboardLayout>
             <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
-                {t("user_management.title")}
+                {(user.role === 'admin' || user.role === 'organizer') ? t("user_management.title") : t("user_management.users") }
             </Typography>
 
             {/* 🔍 Search Bar */}
