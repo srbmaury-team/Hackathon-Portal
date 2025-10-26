@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 
 const hackathonSchema = new mongoose.Schema(
     {
-        title: String,
-        description: String,
-        startDate: Date,
-        endDate: Date,
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+        startDate: { type: Date, required: true },
+        endDate: { type: Date, required: true },
+        isActive: { type: Boolean, default: true },
         organization: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Organization",
@@ -14,10 +15,17 @@ const hackathonSchema = new mongoose.Schema(
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
         },
+        teams: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Team",
+        }],
+        rounds: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Round",
+        }],
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Hackathon", hackathonSchema);
+module.exports = mongoose.models.Hackathon || mongoose.model("Hackathon", hackathonSchema);

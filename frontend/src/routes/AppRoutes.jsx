@@ -7,6 +7,7 @@ import PublicIdeasPage from "../pages/PublicIdeasPage";
 import AnnouncementsPage from "../pages/AnnouncementsPage";
 import SettingsPage from "../pages/SettingsPage";
 import UserManagementPage from "../pages/UserManagementPage";
+import HackathonPage from "../pages/HackathonPage";
 
 const AppRoutes = () => {
     const { user } = useContext(AuthContext);
@@ -46,6 +47,12 @@ const AppRoutes = () => {
                     path="/settings"
                     element={
                         user ? <SettingsPage /> : <Navigate to="/" />
+                    }
+                />
+                <Route
+                    path="/hackathons"
+                    element={
+                        user ? <HackathonPage /> : <Navigate to="/" />
                     }
                 />
             </Routes>

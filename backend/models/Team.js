@@ -21,4 +21,4 @@ const teamSchema = new mongoose.Schema(
 
 teamSchema.index({ members: 1, hackathonYear: 1 }, { unique: true });
 
-module.exports = mongoose.model("Team", teamSchema);
+module.exports = mongoose.models.Team || mongoose.model("Team", teamSchema);
