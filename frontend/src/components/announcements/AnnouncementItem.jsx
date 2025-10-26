@@ -41,9 +41,6 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
 
     // Delete using api.js
     const handleDelete = async () => {
-
-        console.log(announcement.createdBy._id == user._id);
-        console.log(user._id);
         try {
             await deleteAnnouncement(announcement._id, token);
             toast.success(t("announcement.announcement_deleted"));

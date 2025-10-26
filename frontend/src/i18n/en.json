@@ -12,6 +12,7 @@
         "announcements": "Announcements",
         "submit_idea": "Submit Idea",
         "public_ideas": "Public Ideas",
+        "members": "Members",
         "teams": "Teams",
         "my_teams": "My Teams",
         "my_participation": "My Participation",
@@ -78,5 +79,28 @@
         "system": "System",
         "language": "Language",
         "notifications": "Enable Notifications"
+    },
+    "user_management": {
+        "title": "User Management",
+        "name": "Name",
+        "email": "Email",
+        "organization": "Organization",
+        "role": "Role",
+        "change_success": "Role updated successfully",
+        "change_failed": "Failed to update role",
+        "change_role_title": "Change Role for {{name}}",
+        "select_new_role": "Select a new role",
+        "fetch_failed": "Failed to fetch users",
+        "no_users": "No users found",
+        "actions": "Actions",
+        "change_role": "Change Role",
+        "search_placeholder": "Search for a user"
+    },
+    "roles": {
+        "participant": "Participant",
+        "organizer": "Organizer",
+        "judge": "Judge",
+        "mentor": "Mentor",
+        "admin": "Admin"
     }
 }

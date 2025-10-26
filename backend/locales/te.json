@@ -1,23 +1,54 @@
 {
-    "auth": {
-        "organization_not_onboarded": "మీ సంస్థ ఇంకా ప్లాట్‌ఫారమ్‌లో నమోదు కాలేదు. దయచేసి మీ అడ్మిన్‌ను ముందుగా నమోదు చేయమని అడగండి.",
-        "google_login_failed": "గూగుల్ లాగిన్ విఫలమైంది",
-        "login_success": "లాగిన్ విజయవంతమైంది",
-        "unauthorized": "అనధికార ప్రవేశం",
-        "forbidden_role": "ఈ చర్య చేయడానికి మీకు అనుమతి లేదు",
-        "forbidden": "ఈ వనరును మీరు మార్చలేరు",
-        "user_not_found": "వినియోగదారు కనబడలేదు",
-        "no_token": "టోకెన్ ఇవ్వలేదు",
-        "invalid_token": "చెల్లని టోకెన్"
-    },
-    "announcement": {
-        "created_successfully": "ప్రకటన విజయవంతంగా సృష్టించబడింది",
-        "creation_failed": "ప్రకటన సృష్టించడంలో విఫలమైంది",
-        "get_failed": "ప్రకటనలను పొందడంలో విఫలమైంది",
-        "updated_successfully": "ప్రకటన విజయవంతంగా నవీకరించబడింది",
-        "update_failed": "ప్రకటన నవీకరించడంలో విఫలమైంది",
-        "deleted_successfully": "ప్రకటన విజయవంతంగా తొలగించబడింది",
-        "delete_failed": "ప్రకటన తొలగించడంలో విఫలమైంది",
-        "not_found": "ప్రకటన కనబడలేదు"
-    }
+	"auth": {
+		"no_token": "ప్రామాణీకరణ టోకెన్ అందించబడలేదు",
+		"user_not_found": "వినియోగదారు కనబడలేదు",
+		"invalid_token": "చెల్లని లేదా గడువు ముగిసిన టోకెన్",
+		"organization_not_onboarded": "మీ సంస్థ ఇంకా ప్లాట్‌ఫారమ్‌లో నమోదు కాలేదు. దయచేసి అడ్మిన్‌ను సంప్రదించండి.",
+		"google_login_failed": "గూగుల్ ప్రామాణీకరణ విఫలమైంది",
+		"login_success": "లాగిన్ విజయవంతమైంది",
+		"forbidden": "ఈ చర్య చేయడానికి మీకు అనుమతి లేదు",
+		"forbidden_role": "auth.forbidden_role"
+	},
+	"user": {
+		"fetch_success": "వినియోగదారులు విజయవంతంగా పొందబడ్డారు",
+		"fetch_failed": "వినియోగదారులను పొందడంలో విఫలమైంది",
+		"not_found": "వినియోగదారు కనబడలేదు",
+		"cannot_modify_admin": "అడ్మిన్ వినియోగదారు పాత్రను మార్చలేరు",
+		"role_updated_successfully": "వినియోగదారు పాత్ర విజయవంతంగా నవీకరించబడింది",
+		"role_update_failed": "వినియోగదారు పాత్రను నవీకరించడంలో విఫలమైంది"
+	},
+	"announcement": {
+		"all_fields_required": "శీర్షిక మరియు సందేశం అవసరం",
+		"announcement_created": "ప్రకటన విజయవంతంగా సృష్టించబడింది",
+		"creation_failed": "ప్రకటన సృష్టించడంలో విఫలమైంది",
+		"announcement_updated": "ప్రకటన విజయవంతంగా నవీకరించబడింది",
+		"update_failed": "ప్రకటన నవీకరించడంలో విఫలమైంది",
+		"announcement_deleted": "ప్రకటన విజయవంతంగా తొలగించబడింది",
+		"delete_failed": "ప్రకటన తొలగించడంలో విఫలమైంది",
+		"get_failed": "ప్రకటనలను పొందడంలో విఫలమైంది",
+		"not_found": "ప్రకటన కనబడలేదు",
+		"unauthorized": "ఈ చర్య చేయడానికి మీకు అధికారం లేదు",
+		"created_successfully": "announcement.created_successfully",
+		"updated_successfully": "announcement.updated_successfully",
+		"deleted_successfully": "announcement.deleted_successfully"
+	},
+	"idea": {
+		"all_fields_required": "శీర్షిక, వివరణ మరియు కనిపించే స్థితి అవసరం",
+		"idea_submitted": "ఆలోచన విజయవంతంగా సమర్పించబడింది",
+		"idea_submit_failed": "ఆలోచన సమర్పించడంలో విఫలమైంది",
+		"idea_updated": "ఆలోచన విజయవంతంగా నవీకరించబడింది",
+		"idea_update_failed": "ఆలోచన నవీకరించడంలో విఫలమైంది",
+		"idea_deleted": "ఆలోచన విజయవంతంగా తొలగించబడింది",
+		"idea_delete_failed": "ఆలోచన తొలగించడంలో విఫలమైంది",
+		"not_found": "ఆలోచన కనబడలేదు",
+		"unauthorized": "ఈ చర్య చేయడానికి మీకు అధికారం లేదు",
+		"submitted_successfully": "idea.submitted_successfully",
+		"updated_successfully": "idea.updated_successfully",
+		"update_failed": "idea.update_failed",
+		"deleted_successfully": "idea.deleted_successfully",
+		"delete_failed": "idea.delete_failed"
+	},
+	"organization": {
+		"not_found": "సంస్థ కనబడలేదు"
+	}
 }
