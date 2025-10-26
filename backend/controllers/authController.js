@@ -59,8 +59,6 @@ class AuthController {
                     role,
                 });
 
-                // Add to org
-                organization.members.push(user._id);
                 if (isAdmin) organization.admin = user._id;
                 await organization.save();
             }

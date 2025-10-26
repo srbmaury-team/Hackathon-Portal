@@ -4,8 +4,8 @@ const roundSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         description: String,
-        startDate: Date,
-        endDate: Date,
+        startDate: {type: Date, select: true},
+        endDate: {type: Date, select: true},
         submissions: [
             {
                 type: mongoose.Schema.Types.ObjectId,

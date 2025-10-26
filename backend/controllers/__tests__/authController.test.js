@@ -84,7 +84,7 @@ describe("AuthController - Google Login", () => {
     expect(dbUser.organization.toString()).toBe(org._id.toString());
 
     const updatedOrg = await Organization.findById(org._id);
-    expect(updatedOrg.members.map(m => m.toString())).toContain(dbUser._id.toString());
+    expect(dbUser.organization.toString()).toBe(updatedOrg._id.toString());
   });
 
   it("should onboard an admin user and create org if not exist", async () => {
@@ -103,6 +103,7 @@ describe("AuthController - Google Login", () => {
     const newOrg = await Organization.findById(dbUser.organization);
     expect(newOrg).toBeTruthy();
     expect(newOrg.admin.toString()).toBe(dbUser._id.toString());
+    expect(dbUser.organization.toString()).toBe(newOrg._id.toString());
   });
 
   it("should reject users from un-onboarded org if not admin", async () => {
