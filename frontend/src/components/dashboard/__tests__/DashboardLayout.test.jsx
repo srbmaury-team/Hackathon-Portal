@@ -11,6 +11,7 @@ vi.mock("@mui/icons-material", () => ({
     Home: () => <div>HomeIcon</div>,
     Lightbulb: () => <div>LightbulbIcon</div>,
     Group: () => <div>GroupIcon</div>,
+    Event: () => <div>EventIcon</div>,
     EventNote: () => <div>EventNoteIcon</div>,
     Logout: () => <div>LogoutIcon</div>,
     Menu: () => <div>MenuIcon</div>,
@@ -51,28 +52,25 @@ describe("DashboardLayout", () => {
     it("renders menu items based on user role", () => {
         renderComponent();
 
-        // Participant menu items
-        const submitIdeaItems = screen.getAllByText(/submit idea/i);
-        expect(submitIdeaItems.length).toBeGreaterThan(0);
+        // Define all expected menu items for participant role
+        const expectedMenuItems = [
+            "announcements",
+            "submit idea",
+            "public ideas",
+            "members",
+            "hackathons",
+            "my teams",
+            "my participation",
+            "settings",
+            "logout",
+        ];
 
-        const publicIdeasItems = screen.getAllByText(/public ideas/i);
-        expect(publicIdeasItems.length).toBeGreaterThan(0);
-
-        const myTeamsItems = screen.getAllByText(/my teams/i);
-        expect(myTeamsItems.length).toBeGreaterThan(0);
-
-        const myParticipationItems = screen.getAllByText(/my participation/i);
-        expect(myParticipationItems.length).toBeGreaterThan(0);
-
-        const announcementsItems = screen.getAllByText(/announcements/i);
-        expect(announcementsItems.length).toBeGreaterThan(0);
-
-        const settingsItems = screen.getAllByText(/settings/i);
-        expect(settingsItems.length).toBeGreaterThan(0);
-
-        const logoutItems = screen.getAllByText(/logout/i);
-        expect(logoutItems.length).toBeGreaterThan(0);
+        expectedMenuItems.forEach((text) => {
+            const elements = screen.getAllByText(new RegExp(text, "i")); // case-insensitive
+            expect(elements.length).toBeGreaterThan(0);
+        });
     });
+
 
     it("calls logout action when logout is clicked", () => {
         renderComponent();
