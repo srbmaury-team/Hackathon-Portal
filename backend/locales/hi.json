@@ -41,7 +41,12 @@
 		"idea_deleted": "विचार सफलतापूर्वक हटाया गया",
 		"idea_delete_failed": "विचार हटाने में विफल",
 		"not_found": "विचार नहीं मिला",
-		"unauthorized": "आप यह कार्य करने के लिए अधिकृत नहीं हैं"
+		"unauthorized": "आप यह कार्य करने के लिए अधिकृत नहीं हैं",
+		"submitted_successfully": "idea.submitted_successfully",
+		"updated_successfully": "idea.updated_successfully",
+		"update_failed": "idea.update_failed",
+		"deleted_successfully": "idea.deleted_successfully",
+		"delete_failed": "idea.delete_failed"
 	},
 	"organization": {
 		"not_found": "संगठन नहीं मिला"

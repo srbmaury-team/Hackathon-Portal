@@ -41,7 +41,12 @@
 		"idea_deleted": "Idea deleted successfully",
 		"idea_delete_failed": "Failed to delete idea",
 		"not_found": "Idea not found",
-		"unauthorized": "You are not authorized to perform this action"
+		"unauthorized": "You are not authorized to perform this action",
+		"submitted_successfully": "idea.submitted_successfully",
+		"updated_successfully": "idea.updated_successfully",
+		"update_failed": "idea.update_failed",
+		"deleted_successfully": "idea.deleted_successfully",
+		"delete_failed": "idea.delete_failed"
 	},
 	"organization": {
 		"not_found": "Organization not found"

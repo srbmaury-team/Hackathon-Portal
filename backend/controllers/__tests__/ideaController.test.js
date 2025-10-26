@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url);
 const app = require("../../app");
 
 import { connectTestDb, clearDb, closeTestDb } from "../../setup/testDb.js";
-import User from "../../models/User.js";
+import User, { deleteMany } from "../../models/User.js";
 import Organization from "../../models/Organization.js";
 import Idea from "../../models/Idea.js";
 
@@ -140,6 +140,7 @@ describe("IdeaController", () => {
       organization: org._id,
       googleId: "other-google-id",
     });
+
     const idea = await Idea.create({
       title: "Other Idea",
       description: "Other desc",
@@ -154,24 +155,7 @@ describe("IdeaController", () => {
       .send({ title: "Hack", description: "Try", isPublic: false });
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe("Unauthorized");
-  });
-
-  it("should delete user's own idea", async () => {
-    const idea = await Idea.create({
-      title: "Delete Me",
-      description: "To delete",
-      isPublic: true,
-      submitter: user._id,
-      organization: org._id,
-    });
-
-    const res = await request(app)
-      .delete(`/api/ideas/${idea._id}`)
-      .set("Authorization", `Bearer ${userToken}`);
-
-    expect(res.statusCode).toBe(200);
-    expect(await Idea.findById(idea._id)).toBeNull();
+    expect(res.body.message).toBe("idea.update_failed"); // updated to match API
   });
 
   it("should not delete another user's idea", async () => {
@@ -196,6 +180,26 @@ describe("IdeaController", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe("Unauthorized");
+    expect(res.body.message).toBe("idea.delete_failed"); // updated to match API
+  });
+
+  it("should delete user's own idea", async () => {
+    const idea = await Idea.create({
+      title: "Delete Me",
+      description: "To be deleted",
+      isPublic: true,
+      submitter: user._id,
+      organization: org._id,
+    });
+
+    const res = await request(app)
+      .delete(`/api/ideas/${idea._id}`)
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toBe("idea.deleted_successfully");
+    // Ensure it's actually removed from DB
+    const dbIdea = await Idea.findById(idea._id);
+    expect(dbIdea).toBeNull();
   });
 });

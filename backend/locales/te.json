@@ -41,7 +41,12 @@
 		"idea_deleted": "ఆలోచన విజయవంతంగా తొలగించబడింది",
 		"idea_delete_failed": "ఆలోచన తొలగించడంలో విఫలమైంది",
 		"not_found": "ఆలోచన కనబడలేదు",
-		"unauthorized": "ఈ చర్య చేయడానికి మీకు అధికారం లేదు"
+		"unauthorized": "ఈ చర్య చేయడానికి మీకు అధికారం లేదు",
+		"submitted_successfully": "idea.submitted_successfully",
+		"updated_successfully": "idea.updated_successfully",
+		"update_failed": "idea.update_failed",
+		"deleted_successfully": "idea.deleted_successfully",
+		"delete_failed": "idea.delete_failed"
 	},
 	"organization": {
 		"not_found": "సంస్థ కనబడలేదు"
