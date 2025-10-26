@@ -16,6 +16,7 @@ vi.mock("@mui/icons-material", () => ({
     Menu: () => <div>MenuIcon</div>,
     Settings: () => <div>SettingsIcon</div>,
     LightbulbOutline: () => <div>LightbulbOutlineIcon</div>,
+    Person: () => <div>PersonIcon</div>, // ← add this
 }));
 
 describe("DashboardLayout", () => {
