@@ -25,5 +25,6 @@ app.use(i18nMiddleware);
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/ideas', require('./routes/ideaRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 module.exports = app;
