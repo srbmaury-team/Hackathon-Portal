@@ -11,8 +11,6 @@ import {
     Select,
     InputLabel,
     FormControl,
-    Chip,
-    OutlinedInput,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -20,6 +18,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { registerForHackathon } from "../../api/registrations";
 import { getPublicIdeas } from "../../api/ideas";
 import { getUsers } from "../../api/users";
+import MemberSearchPicker from "./MemberSearchPicker";
 
 const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
     const { t } = useTranslation();
@@ -35,7 +34,6 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Fetch ideas and members
     useEffect(() => {
         if (!hackathon || !open) return;
 
@@ -45,11 +43,8 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
                     getPublicIdeas(token),
                     getUsers(token),
                 ]);
-                
-                // Extract ideas array from response
+
                 setIdeas(ideasRes?.ideas || []);
-                
-                // Flatten grouped users into a single array
                 const allUsers = usersRes?.groupedUsers
                     ? Object.values(usersRes.groupedUsers).flat()
                     : [];
@@ -59,6 +54,7 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
                 toast.error(t("hackathon.fetch_failed") || "Failed to fetch data!");
             }
         };
+
         fetchData();
     }, [hackathon, open, token, t]);
 
@@ -76,7 +72,6 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
                 ideaId: formData.idea,
                 memberIds: formData.members,
             };
-
             await registerForHackathon(hackathon._id, payload, token);
             toast.success(t("hackathon.register_success") || "Registered successfully!");
             onClose();
@@ -123,37 +118,12 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
                         </Select>
                     </FormControl>
 
-                    {/* Members Selection */}
-                    <FormControl fullWidth>
-                        <InputLabel>{t("hackathon.members") || "Select Members"}</InputLabel>
-                        <Select
-                            multiple
-                            name="members"
-                            value={formData.members}
-                            onChange={handleChange}
-                            input={<OutlinedInput label="Members" />}
-                            renderValue={(selected) => (
-                                <Stack direction="row" spacing={1} flexWrap="wrap">
-                                    {selected.map((id) => {
-                                        const member = users.find((u) => u._id === id);
-                                        return (
-                                            <Chip
-                                                key={id}
-                                                label={member?.name || "Unknown"}
-                                                size="small"
-                                            />
-                                        );
-                                    })}
-                                </Stack>
-                            )}
-                        >
-                            {users.map((user) => (
-                                <MenuItem key={user._id} value={user._id}>
-                                    {user.name} ({user.email})
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    {/* Members Search Picker */}
+                    <MemberSearchPicker
+                        users={users}
+                        selectedIds={formData.members}
+                        onChange={(ids) => setFormData((prev) => ({ ...prev, members: ids }))}
+                    />
                 </Stack>
             </DialogContent>
 

@@ -1,17 +1,19 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { vi, describe, it, beforeEach, expect } from "vitest";
-// Partial mock for react-i18next so initReactI18next is available for i18n init
-vi.mock("react-i18next", async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        useTranslation: () => ({ t: (key) => key }),
-        initReactI18next: { type: "3rdParty" },
-    };
-});
+import HackathonPage from "../HackathonPage";
+import { AuthContext } from "../../context/AuthContext";
+import * as api from "../../api/hackathons";
+import toast from "react-hot-toast";
 
-// Mock react-hot-toast (mock factory)
+// Mock i18n
+vi.mock("react-i18next", () => ({
+    useTranslation: () => ({
+        t: (key) => key,
+    }),
+}));
+
+// Mock react-hot-toast
 vi.mock("react-hot-toast", () => ({
     default: {
         error: vi.fn(),
@@ -59,14 +61,7 @@ vi.mock("../../api/hackathons", () => ({
     createHackathon: vi.fn(),
     updateHackathon: vi.fn(),
     deleteHackathon: vi.fn(),
-    getHackathonById: vi.fn(),
 }));
-
-// Import modules that depend on the mocked modules after mocking so mocks are applied
-import HackathonPage from "../HackathonPage";
-import { AuthContext } from "../../context/AuthContext";
-import * as api from "../../api/hackathons";
-import toast from "react-hot-toast";
 
 describe("HackathonPage", () => {
     const mockHackathons = [
@@ -245,7 +240,7 @@ describe("HackathonPage", () => {
     describe("Delete Hackathon", () => {
         it("calls deleteHackathon with confirmation and refreshes list", async () => {
             api.deleteHackathon.mockResolvedValue({ success: true });
-            api.getHackathonById.mockResolvedValue({ hackathon: mockHackathons[0] });
+            window.confirm = vi.fn(() => true);
 
             renderWithUser("admin");
 
@@ -256,19 +251,15 @@ describe("HackathonPage", () => {
             const deleteButtons = screen.getAllByText("Delete");
             deleteButtons[0].click();
 
-            // Confirm dialog should appear; click confirm
-            const confirmBtn = await screen.findByRole("button", { name: /common.delete/i });
-            fireEvent.click(confirmBtn);
-
             await waitFor(() => {
-                expect(api.getHackathonById).toHaveBeenCalledWith("1", mockToken);
+                expect(window.confirm).toHaveBeenCalledWith("hackathon.confirm_delete");
                 expect(api.deleteHackathon).toHaveBeenCalledWith("1", mockToken);
                 expect(api.getAllHackathons).toHaveBeenCalledTimes(2); // Once on mount, once after delete
             });
         });
 
         it("does not delete hackathon when user cancels confirmation", async () => {
-            api.getHackathonById.mockResolvedValue({ hackathon: mockHackathons[0] });
+            window.confirm = vi.fn(() => false);
 
             renderWithUser("admin");
 
@@ -279,12 +270,8 @@ describe("HackathonPage", () => {
             const deleteButtons = screen.getAllByText("Delete");
             deleteButtons[0].click();
 
-            // Click cancel on the confirm dialog
-            const cancelBtn = await screen.findByRole("button", { name: /common.cancel/i });
-            fireEvent.click(cancelBtn);
-
             await waitFor(() => {
-                expect(api.getHackathonById).toHaveBeenCalledWith("1", mockToken);
+                expect(window.confirm).toHaveBeenCalledWith("hackathon.confirm_delete");
             });
 
             expect(api.deleteHackathon).not.toHaveBeenCalled();
