@@ -9,7 +9,7 @@ import {
     Divider,
 } from "@mui/material";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
-import { getPublicIdeas } from "../api/api";
+import { getPublicIdeas } from "../api/ideas";
 import IdeasTable from "../components/ideas/IdeasTable";
 import { useTranslation } from "react-i18next";
 

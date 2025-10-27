@@ -11,7 +11,7 @@ import {
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import IdeaForm from "../components/ideas/IdeaForm";
 import IdeasTable from "../components/ideas/IdeasTable";
-import { getUserIdeas } from "../api/api";
+import { getUserIdeas } from "../api/ideas";
 import { useTranslation } from "react-i18next";
 
 const IdeaSubmissionPage = () => {

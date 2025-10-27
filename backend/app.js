@@ -27,5 +27,6 @@ app.use('/api/ideas', require('./routes/ideaRoutes'));
 app.use('/api/announcements', require('./routes/announcementRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/hackathons', require('./routes/hackathonRoutes'));
+app.use('/api/register', require('./routes/registrationRoutes'));
 
 module.exports = app;

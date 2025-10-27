@@ -67,8 +67,6 @@ const HackathonForm = ({ onSubmit, initialData }) => {
             rounds: formattedRounds,
         };
 
-        console.log("Submitting hackathon payload:", JSON.stringify(payload, null, 2));
-
         try {
             await onSubmit(payload);
             toast.success(initialData ? t("hackathon.updated") : t("hackathon.created"));

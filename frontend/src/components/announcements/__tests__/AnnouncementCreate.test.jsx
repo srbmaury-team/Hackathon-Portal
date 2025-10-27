@@ -2,13 +2,13 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AnnouncementCreate from "../AnnouncementCreate";
 import { vi } from "vitest";
-import * as api from "../../../api/api";
+import * as api from "../../../api/announcements";
 import toast from "react-hot-toast";
 import { I18nextProvider } from "react-i18next";
 import i18n from "../../../i18n/i18n";
 
 // Mock API
-vi.mock("../../../api/api", () => ({
+vi.mock("../../../api/announcements", () => ({
   createAnnouncement: vi.fn(),
 }));
 
