@@ -61,40 +61,141 @@ jobs:
           done >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: 🤖 Generate AI-Powered Bulletwise Summary
+      - name: 📝 Generate Detailed Summary
+        id: detailed-summary
+        run: |
+          echo "🔍 Analyzing changes in detail..."
+          BASE_BRANCH=$(git merge-base origin/main HEAD || echo "origin/main")
+          
+          # Create a detailed analysis of changes
+          cat << 'EOF' > summary.md
+          #### 📝 Detailed Changes
+          
+          EOF
+          
+          # Analyze each changed file
+          git diff --name-status $BASE_BRANCH | while read status file; do
+            echo "" >> summary.md
+            case $status in
+              A)
+                echo "**🆕 New File: \`$file\`**" >> summary.md
+                # Count lines in new file
+                LINES=$(git show HEAD:"$file" 2>/dev/null | wc -l | tr -d ' ')
+                echo "  - Added $LINES lines" >> summary.md
+                ;;
+              M)
+                echo "**✏️ Modified: \`$file\`**" >> summary.md
+                # Get additions and deletions
+                STATS=$(git diff --numstat $BASE_BRANCH -- "$file")
+                ADDED=$(echo "$STATS" | awk '{print $1}')
+                REMOVED=$(echo "$STATS" | awk '{print $2}')
+                echo "  - Changed: +$ADDED/-$REMOVED lines" >> summary.md
+                
+                # Try to identify what changed
+                if git diff $BASE_BRANCH -- "$file" | grep -q "^+.*function\|^+.*const\|^+.*export"; then
+                  echo "  - 🔧 Code modifications detected" >> summary.md
+                fi
+                if git diff $BASE_BRANCH -- "$file" | grep -q "^+.*test\|^+.*describe\|^+.*it("; then
+                  echo "  - ✅ Test updates included" >> summary.md
+                fi
+                if git diff $BASE_BRANCH -- "$file" | grep -q "^+.*import\|^+.*require"; then
+                  echo "  - 📦 Dependency changes" >> summary.md
+                fi
+                ;;
+              D)
+                echo "**🗑️ Deleted: \`$file\`**" >> summary.md
+                ;;
+              R*)
+                NEW_FILE=$(echo "$file" | cut -f2)
+                echo "**🔄 Renamed: \`$file\` → \`$NEW_FILE\`**" >> summary.md
+                ;;
+            esac
+          done
+          
+          echo "" >> summary.md
+          echo "#### 🎯 Summary" >> summary.md
+          
+          # Count test files
+          TEST_FILES=$(git diff --name-status $BASE_BRANCH | grep -c "test\|spec" || echo "0")
+          if [ "$TEST_FILES" -gt 0 ]; then
+            echo "- ✅ **Testing:** $TEST_FILES test file(s) modified/added" >> summary.md
+          fi
+          
+          # Check for config changes
+          CONFIG_FILES=$(git diff --name-status $BASE_BRANCH | grep -c "config\|\.yml\|\.yaml\|\.json" || echo "0")
+          if [ "$CONFIG_FILES" -gt 0 ]; then
+            echo "- ⚙️ **Configuration:** $CONFIG_FILES config file(s) updated" >> summary.md
+          fi
+          
+          # Check for documentation
+          DOC_FILES=$(git diff --name-status $BASE_BRANCH | grep -c "README\|\.md\|docs/" || echo "0")
+          if [ "$DOC_FILES" -gt 0 ]; then
+            echo "- 📚 **Documentation:** Updated" >> summary.md
+          fi
+          
+          echo "DETAILED_SUMMARY<<EOF" >> $GITHUB_OUTPUT
+          cat summary.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "✅ Detailed summary generated"
+
+      - name: 🤖 Try AI Enhancement (Optional)
         id: ai-summary
+        continue-on-error: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          echo "🧠 Generating detailed bulletwise analysis..."
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "⚠️ OPENAI_API_KEY not configured, skipping AI enhancement"
+            echo "AI_AVAILABLE=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           
-          # Escape and prepare diff for JSON
-          DIFF_CONTENT=$(head -c 15000 changes.diff | jq -Rs .)
+          echo "🧠 Attempting AI-powered analysis..."
           
-          SUMMARY=$(curl -s https://api.openai.com/v1/chat/completions \
+          # Prepare a condensed diff (first 10000 chars)
+          DIFF_SAMPLE=$(head -c 10000 changes.diff | sed 's/"/\\"/g' | sed 's/$/\\n/' | tr -d '\n')
+          
+          # Make API call with better error handling
+          RESPONSE=$(curl -s -w "\n%{http_code}" https://api.openai.com/v1/chat/completions \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
-            -d '{
-              "model": "gpt-4",
-              "messages": [
+            -d "{
+              \"model\": \"gpt-4o-mini\",
+              \"messages\": [
                 {
-                  "role": "system",
-                  "content": "You are an expert code reviewer. Analyze git diffs and provide clear, structured bullet points explaining the changes. Focus on: 1) What changed 2) Why it matters 3) Impact on the codebase. Use emojis for better readability."
+                  \"role\": \"system\",
+                  \"content\": \"You are a code reviewer. Summarize PR changes in 3-5 clear bullet points.\"
                 },
                 {
-                  "role": "user",
-                  "content": "Analyze this PR diff and provide a detailed bulletwise explanation:\n\n## Instructions:\n- Start with a brief overview\n- List key changes as bullet points (use sub-bullets for details)\n- Highlight any breaking changes or important notes\n- Mention testing additions/changes\n- Note documentation updates\n\n## Diff:\n'"$DIFF_CONTENT"'"
+                  \"role\": \"user\",
+                  \"content\": \"Summarize these changes concisely:\\n\\n$DIFF_SAMPLE\"
                 }
               ],
-              "temperature": 0.3,
-              "max_tokens": 1500
-            }' | jq -r '.choices[0].message.content // "Failed to generate summary"')
+              \"temperature\": 0.3,
+              \"max_tokens\": 500
+            }")
           
-          echo "SUMMARY<<EOF" >> $GITHUB_OUTPUT
-          echo "$SUMMARY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
           
-          echo "✅ AI Summary generated"
+          if [ "$HTTP_CODE" = "200" ]; then
+            AI_SUMMARY=$(echo "$BODY" | jq -r '.choices[0].message.content // empty')
+            if [ -n "$AI_SUMMARY" ]; then
+              echo "AI_SUMMARY<<EOF" >> $GITHUB_OUTPUT
+              echo "" >> $GITHUB_OUTPUT
+              echo "#### 🤖 AI Insights" >> $GITHUB_OUTPUT
+              echo "$AI_SUMMARY" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+              echo "AI_AVAILABLE=true" >> $GITHUB_OUTPUT
+              echo "✅ AI summary generated successfully"
+            else
+              echo "AI_AVAILABLE=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ OpenAI API returned status $HTTP_CODE"
+            echo "AI_AVAILABLE=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: 💬 Post PR Comment
         env:
@@ -118,13 +219,27 @@ jobs:
           
           ---
           
-          ### 🔍 AI-Generated Summary
-          ${{ steps.ai-summary.outputs.SUMMARY }}
+          ${{ steps.detailed-summary.outputs.DETAILED_SUMMARY }}
+          
+          COMMENT_EOF
+          
+          # Add AI summary if available
+          if [ "${{ steps.ai-summary.outputs.AI_AVAILABLE }}" = "true" ]; then
+            cat << 'AI_EOF' >> comment.md
           
           ---
           
-          <sub>🤖 This summary was automatically generated by AI. Review carefully and use your judgment.</sub>
-          COMMENT_EOF
+          ${{ steps.ai-summary.outputs.AI_SUMMARY }}
+          AI_EOF
+          fi
+          
+          # Add footer
+          cat << 'FOOTER_EOF' >> comment.md
+          
+          ---
+          
+          <sub>🤖 Generated automatically | Review carefully and use your judgment</sub>
+          FOOTER_EOF
           
           # Post the comment
           gh pr comment $PR_NUMBER --body-file comment.md
