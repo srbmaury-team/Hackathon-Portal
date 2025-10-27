@@ -2,12 +2,16 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import UserManagementPage from "../UserManagementPage";
-import { AuthContext } from "../../context/AuthContext";
-import * as api from "../../api/api";
-import toast from "react-hot-toast";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../../i18n/i18n";
 
-vi.mock("../../api/api");
+// Mock the users api module so getUsers/updateUserRole are vi.fn mocks
+vi.mock("../../api/users", () => ({
+    getUsers: vi.fn(),
+    updateUserRole: vi.fn(),
+}));
+
+vi.mock("../../api/ideas");
 // Mock react-hot-toast
 vi.mock("react-hot-toast", () => ({
     default: {
@@ -16,12 +20,20 @@ vi.mock("react-hot-toast", () => ({
     },
 }));
 
+// Use static imports so vitest hoisted mocks apply correctly
+import * as api from "../../api/users";
+import toast from "react-hot-toast";
+import { AuthContext } from "../../context/AuthContext";
+import UserManagementPage from "../UserManagementPage";
+
 const renderWithProviders = (ui, { user } = {}) => {
     return render(
         <MemoryRouter>
-            <AuthContext.Provider value={{ user }}>
-                {ui}
-            </AuthContext.Provider>
+            <I18nextProvider i18n={i18n}>
+                <AuthContext.Provider value={{ user }}>
+                    {ui}
+                </AuthContext.Provider>
+            </I18nextProvider>
         </MemoryRouter>
     );
 };

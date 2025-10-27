@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import IdeaForm from "../IdeaForm";
-import * as api from "../../../api/api";
+import * as api from "../../../api/ideas";
 import toast from "react-hot-toast";
 
 // Mock the API and toast
-vi.mock("../../../api/api");
+vi.mock("../../../api/ideas");
 vi.mock("react-hot-toast", () => ({
   default: {
     success: vi.fn(),

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, TextField, Box, Typography, useTheme } from "@mui/material";
 import MDEditor from "@uiw/react-md-editor";
 import { useTranslation } from "react-i18next";
-import { createAnnouncement } from "../../api/api";
+import { createAnnouncement } from "../../api/announcements";
 import toast from "react-hot-toast";
 
 const AnnouncementCreate = ({ onCreated }) => {

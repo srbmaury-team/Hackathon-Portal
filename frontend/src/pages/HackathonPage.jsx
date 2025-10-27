@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Typography } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+} from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -10,15 +18,21 @@ import {
     createHackathon,
     updateHackathon,
     deleteHackathon,
-} from "../api/api";
+    getHackathonById,
+} from "../api/hackathons";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import HackathonRegisterModal from "../components/teams/HackathonRegisterModal";
+import ConfirmDialog from "../components/common/ConfirmDialog";
 
 const HackathonPage = () => {
     const { t } = useTranslation();
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext);
     const [hackathons, setHackathons] = useState([]);
     const [editingHackathon, setEditingHackathon] = useState(null);
-    const { user } = useContext(AuthContext);
+
+    // For Delete Confirmation Dialog
+    const [selectedHackathon, setSelectedHackathon] = useState(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const fetchHackathons = async () => {
         try {
@@ -35,23 +49,59 @@ const HackathonPage = () => {
     }, [token]);
 
     const handleCreate = async (data) => {
-        await createHackathon(data, token);
-        fetchHackathons();
-        setEditingHackathon(null);
+        try {
+            await createHackathon(data, token);
+            toast.success(t("hackathon.created"));
+            fetchHackathons();
+            setEditingHackathon(null);
+        } catch (err) {
+            console.error(err);
+            toast.error(t("hackathon.create_failed"));
+        }
     };
 
     const handleUpdate = async (data) => {
         if (!editingHackathon) return;
-        await updateHackathon(editingHackathon._id, data, token);
-        fetchHackathons();
-        setEditingHackathon(null);
+        try {
+            await updateHackathon(editingHackathon._id, data, token);
+            toast.success(t("hackathon.updated"));
+            fetchHackathons();
+            setEditingHackathon(null);
+        } catch (err) {
+            console.error(err);
+            toast.error(t("hackathon.update_failed"));
+        }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm(t("hackathon.confirm_delete"))) {
-            await deleteHackathon(id, token);
-            fetchHackathons();
+    const handleDeleteClick = async (hackathon) => {
+        try {
+            const res = await getHackathonById(hackathon, token);
+            setSelectedHackathon(res.hackathon || hackathon);
+            setDeleteDialogOpen(true);
+        } catch (err) {
+            console.error(err);
+            toast.error(t("hackathon.fetch_failed"));
         }
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedHackathon) return;
+        try {
+            await deleteHackathon(selectedHackathon._id, token);
+            toast.success(t("hackathon.deleted"));
+            fetchHackathons();
+        } catch (err) {
+            console.error(err);
+            toast.error(t("hackathon.delete_failed"));
+        } finally {
+            setDeleteDialogOpen(false);
+            setSelectedHackathon(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteDialogOpen(false);
+        setSelectedHackathon(null);
     };
 
     const handleEdit = (hackathon) => {
@@ -64,19 +114,33 @@ const HackathonPage = () => {
                 {t("hackathon.hackathons")}
             </Typography>
 
-            {(user.role === "admin" || user.role === "organizer")  &&
+            {(user.role === "admin" || user.role === "organizer") && (
                 <HackathonForm
                     initialData={editingHackathon}
                     onSubmit={editingHackathon ? handleUpdate : handleCreate}
-                />}
+                />
+            )}
 
             <Box mt={4}>
                 <HackathonList
                     hackathons={hackathons}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                 />
             </Box>
+
+            <ConfirmDialog
+                open={deleteDialogOpen}
+                title={t("hackathon.confirm_delete_title")}
+                message={t("hackathon.confirm_delete_message", {
+                    name: selectedHackathon?.title || "",
+                })}
+                confirmText={t("common.delete")}
+                cancelText={t("common.cancel")}
+                confirmColor="error"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+            />
         </DashboardLayout>
     );
 };

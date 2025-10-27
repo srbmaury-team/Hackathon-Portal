@@ -3,11 +3,11 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AnnouncementItem from "../AnnouncementItem";
 import { vi } from "vitest";
-import * as api from "../../../api/api";
+import * as api from "../../../api/announcements";
 import toast from "react-hot-toast";
 
 // Mock API functions
-vi.mock("../../../api/api", () => ({
+vi.mock("../../../api/announcements", () => ({
   updateAnnouncement: vi.fn(),
   deleteAnnouncement: vi.fn(),
 }));

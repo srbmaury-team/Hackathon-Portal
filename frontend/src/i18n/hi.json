@@ -54,7 +54,9 @@
         "edit_idea": "विचार संपादित करें",
         "idea_updated": "विचार सफलतापूर्वक अपडेट किया गया!",
         "idea_update_failed": "विचार अपडेट करने में विफल",
-        "idea_delete_confirm": "क्या आप वाकई इस विचार को हटाना चाहते हैं?",
+        "confirm_delete_message": "क्या आप वाकई इस विचार को हटाना चाहते हैं?",
+        "delete_warning": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+        "confirm_delete": "हटाने की पुष्टि करें",
         "idea_deleted": "विचार सफलतापूर्वक हटाया गया!",
         "idea_delete_failed": "विचार हटाने में विफल",
         "save_changes": "परिवर्तन सहेजें",
@@ -134,6 +136,27 @@
         "edit": "संपादित करें",
         "delete": "हटाएं",
         "created_at": "निर्माण तिथि",
-        "last_updated_at": "अंतिम अपडेट तिथि"
+        "last_updated_at": "अंतिम अपडेट तिथि",
+        "deleted": "हैकथॉन सफलतापूर्वक हटाया गया",
+        "delete_failed": "हैकथॉन हटाने में विफल",
+        "confirm_delete_title": "हैकथॉन हटाएं",
+        "confirm_delete_message": "क्या आप वाकई \"{{name}}\" को हटाना चाहते हैं?"
+    },
+    "registration": {
+        "register_for": "के लिए पंजीकरण करें",
+        "team_name": "टीम का नाम",
+        "idea_id": "आइडिया आईडी",
+        "required": "यह फ़ील्ड आवश्यक है",
+        "submit": "जमा करें",
+        "validation_failed": "सत्यापन असफल रहा",
+        "success": "सफलतापूर्वक पंजीकृत किया गया",
+        "failed": "पंजीकरण असफल रहा"
+    },
+    "common": {
+        "cancel": "रद्द करें",
+        "delete": "हटाएं",
+        "loading": "लोड हो रहा है...",
+        "confirm_title": "क्या आप वाकई सुनिश्चित हैं?",
+        "confirm": "पुष्टि करें"
     }
 }

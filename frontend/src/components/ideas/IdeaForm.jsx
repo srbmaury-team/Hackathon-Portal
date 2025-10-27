@@ -8,7 +8,7 @@ import {
     Button,
     Stack,
 } from "@mui/material";
-import { submitIdea } from "../../api/api";
+import { submitIdea } from "../../api/ideas";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 

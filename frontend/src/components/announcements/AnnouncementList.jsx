@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import AnnouncementItem from "./AnnouncementItem";
 import { Typography, CircularProgress, Box, Pagination } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { getAnnouncements } from "../../api/api";
+import { getAnnouncements } from "../../api/announcements";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
 
