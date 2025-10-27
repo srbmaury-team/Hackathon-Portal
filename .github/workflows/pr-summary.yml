@@ -1,57 +1,40 @@
-name: PR Summary Generator
+- name: Generate and Post PR Summary
+  env:
+    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    GH_PAT: ${{ secrets.GH_PAT }}
+    PR_NUMBER: ${{ github.event.pull_request.number }}
+    REPO: ${{ github.repository }}
+  run: |
+    echo "Generating summary using ChatGPT..."
 
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+    DIFF_CONTENT=$(head -c 12000 changes.diff | jq -Rs .)
 
-jobs:
-  summarize:
-    runs-on: ubuntu-latest
+    REQUEST_BODY=$(jq -n --arg diff "$DIFF_CONTENT" '{
+      model: "gpt-5",
+      messages: [
+        {role: "system", content: "You are a helpful AI that summarizes GitHub pull requests in clear, concise bullet points."},
+        {role: "user", content: "Summarize these PR changes in 3–5 bullet points:\n\n" + ($diff | fromjson)}
+      ]
+    }')
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $OPENAI_API_KEY" \
+      -d "$REQUEST_BODY")
 
-      - name: Get PR diff
-        run: |
-          git fetch origin main
-          git diff origin/main...HEAD > changes.diff || echo "No diff found" > changes.diff
+    SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-      - name: Generate and Post PR Summary
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GH_PAT: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-        run: |
-          echo "Generating summary using ChatGPT..."
+    if [ -z "$SUMMARY" ]; then
+      echo "❌ Failed to generate summary. Full API response:"
+      echo "$RESPONSE"
+      exit 1
+    fi
 
-          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
-            -d "{
-              \"model\": \"gpt-5\",
-              \"messages\": [
-                {\"role\": \"system\", \"content\": \"You are a helpful AI that summarizes GitHub pull requests in clear, concise bullet points.\"},
-                {\"role\": \"user\", \"content\": \"Summarize these PR changes in 3–5 bullet points:\\n\\n$(head -c 12000 changes.diff | sed 's/\"/\\\"/g')\"}
-              ]
-            }")
+    echo "✅ Summary generated successfully."
+    echo "$SUMMARY"
 
-          SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-
-          if [ -z "$SUMMARY" ]; then
-            echo "❌ Failed to generate summary. Full API response:"
-            echo "$RESPONSE"
-            exit 1
-          fi
-
-          echo "✅ Summary generated successfully."
-          echo "$SUMMARY"
-
-          echo "💬 Posting summary as PR comment..."
-          curl -s -H "Authorization: token $GH_PAT" \
-            -X POST \
-            -d "{\"body\": \"### 🤖 AI Summary\n$SUMMARY\"}" \
-            "https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
+    echo "💬 Posting summary as PR comment..."
+    curl -s -H "Authorization: token $GH_PAT" \
+      -X POST \
+      -d "{\"body\": \"### 🤖 AI Summary\n$SUMMARY\"}" \
+      "https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
