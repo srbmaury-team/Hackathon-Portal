@@ -15,12 +15,12 @@ import {
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
-import { registerForHackathon } from "../../api/registrations";
+import { registerForHackathon, updateTeam } from "../../api/registrations";
 import { getPublicIdeas, getUserIdeas } from "../../api/ideas";
 import { getUsers } from "../../api/users";
 import MemberSearchPicker from "./MemberSearchPicker";
 
-const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered }) => {
+const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered, team }) => {
     const { t } = useTranslation();
     const { token } = useContext(AuthContext);
     const { user } = useContext(AuthContext);
@@ -48,7 +48,11 @@ const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered }) => {
                 // Use public ideas (tests expect getPublicIdeas)
                 setIdeas(ideasRes?.ideas || []);
                 const allUsers = usersRes?.groupedUsers ? Object.values(usersRes.groupedUsers).flat() : [];
-                setUsers(allUsers);
+                // If we're editing an existing team, restrict the selectable users to participants only
+                const selectableUsers = team
+                    ? allUsers.filter((u) => String(u.role).toLowerCase() === "participant")
+                    : allUsers;
+                setUsers(selectableUsers);
 
                 // ensure the current user is included in members by default and cannot be removed
                 if (user && user._id) {
@@ -64,7 +68,23 @@ const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered }) => {
         };
 
         fetchData();
-    }, [hackathon, open, token, user, t]);
+    }, [hackathon, open, token, user, t, team]);
+
+    // If editing an existing team, prefill formData when modal opens
+    useEffect(() => {
+        if (!open) return;
+        if (team) {
+            setFormData({
+                name: team.name || "",
+                idea: team.idea?._id || team.idea || "",
+                members: (team.members || []).map((m) => (m._id ? m._id : m)),
+            });
+        } else {
+            // reset when creating new
+            setFormData({ name: "", idea: "", members: user && user._id ? [user._id] : [] });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, team]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -80,8 +100,14 @@ const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered }) => {
                 ideaId: formData.idea,
                 memberIds: formData.members,
             };
-            await registerForHackathon(hackathon._id, payload, token);
-            toast.success(t("hackathon.register_success") || "Registered successfully!");
+                    if (team && team._id) {
+                        // Update existing team
+                        await updateTeam(hackathon._id, team._id, payload, token);
+                        toast.success(t("hackathon.update_success") || "Updated successfully!");
+                    } else {
+                        await registerForHackathon(hackathon._id, payload, token);
+                        toast.success(t("hackathon.register_success") || "Registered successfully!");
+                    }
                     if (onRegistered) onRegistered();
                     onClose();
         } catch (error) {

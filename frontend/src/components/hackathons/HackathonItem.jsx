@@ -25,13 +25,14 @@ import RegisterTeamModal from "../teams/HackathonRegisterModal"; // 👈 Import 
 
 const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
     const { t } = useTranslation();
-    const { user, token } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    const token = localStorage.getItem("token");
     const theme = useTheme();
     const colorScheme = theme.palette.mode === "dark" ? "dark" : "light";
 
     const [openRegister, setOpenRegister] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
-    const [teamId, setTeamId] = useState(null);
+    const [myTeam, setMyTeam] = useState(null);
     const [loadingWithdraw, setLoadingWithdraw] = useState(false);
 
     useEffect(() => {
@@ -43,16 +44,16 @@ const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
                 if (!mounted) return;
                 if (res?.team) {
                     setIsRegistered(true);
-                    setTeamId(res.team._id);
+                    setMyTeam(res.team);
                 } else {
                     setIsRegistered(false);
-                    setTeamId(null);
+                    setMyTeam(null);
                 }
             } catch (err) {
                 // if 404, user not registered — that's expected
                 if (err?.response?.status === 404) {
                     setIsRegistered(false);
-                    setTeamId(null);
+                    setMyTeam(null);
                 } else {
                     console.error("fetchMyTeam error", err);
                 }
@@ -147,31 +148,39 @@ const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
                                 >
                                     {t("hackathon.register")}
                                 </Button>
-                            ) : (
-                                <Button
-                                    variant="outlined"
-                                    size="small"
-                                    color="error"
-                                    sx={{ mt: 1 }}
-                                    onClick={async () => {
-                                        try {
-                                            setLoadingWithdraw(true);
-                                            // get token from AuthContext if available
-                                            const token = (user && user.token) || null;
-                                            await withdrawTeam(hackathon._id, teamId, token);
-                                            setIsRegistered(false);
-                                            setTeamId(null);
-                                            toast.success(t("hackathon.withdraw_success") || "Withdrawn successfully");
-                                        } catch (err) {
-                                            console.error(err);
-                                            toast.error(t("hackathon.withdraw_failed") || "Withdraw failed");
-                                        } finally {
-                                            setLoadingWithdraw(false);
-                                        }
-                                    }}
-                                >
-                                    {loadingWithdraw ? t("common.loading") : t("hackathon.withdraw")}
-                                </Button>
+                                    ) : (
+                                <>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        sx={{ mt: 1 }}
+                                        onClick={() => setOpenRegister(true)}
+                                    >
+                                        {t("hackathon.edit") || "Edit"}
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        color="error"
+                                        sx={{ mt: 1 }}
+                                        onClick={async () => {
+                                            try {
+                                                setLoadingWithdraw(true);
+                                                await withdrawTeam(hackathon._id, myTeam._id, token);
+                                                setIsRegistered(false);
+                                                setMyTeam(null);
+                                                toast.success(t("hackathon.withdraw_success") || "Withdrawn successfully");
+                                            } catch (err) {
+                                                console.error(err);
+                                                toast.error(t("hackathon.withdraw_failed") || "Withdraw failed");
+                                            } finally {
+                                                setLoadingWithdraw(false);
+                                            }
+                                        }}
+                                    >
+                                        {loadingWithdraw ? t("common.loading") : t("hackathon.withdraw")}
+                                    </Button>
+                                </>
                             )
                         )}
                     </Stack>
@@ -183,12 +192,13 @@ const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
                 open={openRegister}
                 onClose={() => setOpenRegister(false)}
                 hackathon={hackathon}
+                team={myTeam}
                 onRegistered={async () => {
                     try {
                         const res = await getMyTeam(hackathon._id, token);
                         if (res?.team) {
                             setIsRegistered(true);
-                            setTeamId(res.team._id);
+                            setMyTeam(res.team);
                         }
                     } catch (err) {
                         // ignore

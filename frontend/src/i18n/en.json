@@ -150,10 +150,12 @@
         "details_fetch_failed": "Failed to fetch hackathon details"
         ,
         "withdraw": "Withdraw",
-        "withdraw_success": "Successfully withdrawn from hackathon",
+    "withdraw_success": "Successfully withdrawn from hackathon",
+    "update_success": "Updated successfully",
         "withdraw_failed": "Failed to withdraw from hackathon",
         "name": "Hackathon"
     },
+    
     "teams": {
         "my_teams": "My Teams",
         "fetch_failed": "Failed to fetch your teams"
@@ -164,6 +166,7 @@
         "members": "Members"
     },
     "common": {
+        "edit": "Edit",
         "confirm_title": "Are you sure?",
         "cancel": "Cancel",
         "confirm": "Confirm",

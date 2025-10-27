@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBod
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import HackathonRegisterModal from "../components/teams/HackathonRegisterModal";
 import { AuthContext } from "../context/AuthContext";
 import { getMyTeams, withdrawTeam } from "../api/registrations";
 
@@ -11,6 +12,8 @@ const MyTeamsPage = () => {
     const { token } = useContext(AuthContext);
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editTeam, setEditTeam] = useState(null);
+    const [openEdit, setOpenEdit] = useState(false);
 
     const fetchTeams = async () => {
         setLoading(true);
@@ -65,16 +68,32 @@ const MyTeamsPage = () => {
                                 <TableCell>{team.name}</TableCell>
                                 <TableCell>{team.idea?.title || "-"}</TableCell>
                                 <TableCell>{(team.members || []).map((m) => m.name).join(", ")}</TableCell>
-                                <TableCell>
-                                    <Button variant="outlined" color="error" size="small" onClick={() => handleWithdraw(team)}>
-                                        {t("hackathon.withdraw") || "Withdraw"}
-                                    </Button>
-                                </TableCell>
+                                        <TableCell>
+                                            <Button variant="outlined" size="small" onClick={() => { setEditTeam(team); setOpenEdit(true); }} sx={{ mr: 1 }}>
+                                                {t("common.edit") || "Edit"}
+                                            </Button>
+                                            <Button variant="outlined" color="error" size="small" onClick={() => handleWithdraw(team)}>
+                                                {t("hackathon.withdraw") || "Withdraw"}
+                                            </Button>
+                                        </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </Paper>
+
+                    <HackathonRegisterModal
+                        open={openEdit}
+                        onClose={() => { setOpenEdit(false); setEditTeam(null); }}
+                        hackathon={editTeam?.hackathon}
+                        team={editTeam}
+                        onRegistered={() => {
+                            // refresh list after edit
+                            fetchTeams();
+                            setOpenEdit(false);
+                            setEditTeam(null);
+                        }}
+                    />
         </DashboardLayout>
     );
 };

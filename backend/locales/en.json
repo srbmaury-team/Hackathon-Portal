@@ -71,6 +71,8 @@
 		"mismatched_hackathon": "Team does not belong to this hackathon",
 		"access_denied": "You are not authorized to view this team",
 		"withdraw_success": "Successfully withdrawn from hackathon",
-		"withdraw_failed": "Failed to withdraw from hackathon"
+		"withdraw_failed": "Failed to withdraw from hackathon",
+		"update_success": "Team updated successfully",
+		"update_failed": "Failed to update team"
 	}
 }

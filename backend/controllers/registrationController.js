@@ -230,6 +230,105 @@ class RegistrationController {
             });
         }
     }
+
+    /**
+     * Update a team registration (modify team details)
+     * @route PUT /api/hackathons/:hackathonId/teams/:teamId
+     * @access Private (Team leader or Organizer/Admin)
+     */
+    async update(req, res) {
+        try {
+            const { hackathonId, teamId } = req.params;
+            const { teamName, ideaId, memberIds: rawMemberIds } = req.body;
+
+            const team = await Team.findById(teamId);
+            if (!team) {
+                return res.status(404).json({ message: req.__("registration.team_not_found") });
+            }
+
+            // Check hackathon ownership match
+            if (String(team.hackathon) !== String(hackathonId)) {
+                return res.status(400).json({ message: req.__("registration.mismatched_hackathon") });
+            }
+
+            // Access control: only leader, organizer, or admin can edit
+            const isAdminOrOrganizer = ["admin", "organizer"].includes(req.user.role);
+            const isLeader = String(team.leader) === String(req.user._id);
+            if (!isAdminOrOrganizer && !isLeader) {
+                return res.status(403).json({ message: req.__("registration.access_denied") });
+            }
+
+            // Prepare members (ensure array) and include requesting user
+            const memberIds = Array.isArray(rawMemberIds) ? [...rawMemberIds] : [];
+            if (!memberIds.some((m) => String(m) === String(req.user._id))) {
+                memberIds.push(req.user._id);
+            }
+
+            // Validate inputs
+            if (!teamName || !ideaId || !Array.isArray(memberIds) || memberIds.length === 0) {
+                return res.status(400).json({
+                    message: req.__("registration.validation_failed"),
+                    error: "Team name, ideaId, and members are required.",
+                });
+            }
+
+            // Validate hackathon exists and belongs to same org
+            const hackathon = await Hackathon.findById(hackathonId);
+            if (!hackathon) return res.status(404).json({ message: req.__("hackathon.not_found") });
+            if (String(hackathon.organization) !== String(req.user.organization._id)) {
+                return res.status(403).json({ message: req.__("hackathon.access_denied") });
+            }
+
+            // Ensure hackathon is active
+            if (!hackathon.isActive) {
+                return res.status(400).json({ message: req.__("registration.hackathon_closed") });
+            }
+
+            // Validate idea exists
+            const idea = await Idea.findById(ideaId);
+            if (!idea) return res.status(404).json({ message: req.__("idea.not_found") });
+
+            // Validate team size
+            const size = memberIds.length;
+            if (size < hackathon.mnimumTeamSize || size > hackathon.maximumTeamSize) {
+                return res.status(400).json({
+                    message: req.__("registration.invalid_team_size"),
+                    error: `Team size must be between ${hackathon.mnimumTeamSize} and ${hackathon.maximumTeamSize}.`,
+                });
+            }
+
+            // Ensure none of the new members are already registered in another team for this hackathon
+            const conflictTeam = await Team.findOne({
+                hackathon: hackathonId,
+                members: { $in: memberIds },
+                _id: { $ne: teamId },
+            });
+            if (conflictTeam) {
+                return res.status(400).json({
+                    message: req.__("registration.already_registered"),
+                    error: "One or more members are already registered for this hackathon.",
+                });
+            }
+
+            // Update fields
+            team.name = teamName;
+            team.idea = ideaId;
+            team.members = memberIds;
+
+            await team.save();
+
+            const populatedTeam = await Team.findById(team._id)
+                .populate("idea", "title description")
+                .populate("members", "name email")
+                .populate("hackathon", "title")
+                .populate("organization", "name");
+
+            res.json({ message: req.__("registration.update_success" || "Updated"), team: populatedTeam });
+        } catch (err) {
+            console.error("Update Team Error:", err);
+            res.status(500).json({ message: req.__("registration.update_failed" || "Update failed"), error: err.message });
+        }
+    }
 }
 
 module.exports = new RegistrationController();

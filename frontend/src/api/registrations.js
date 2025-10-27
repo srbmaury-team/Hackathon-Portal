@@ -31,3 +31,11 @@ export const getMyTeams = async (token) => {
     });
     return res.data;
 };
+
+// Update a team registration
+export const updateTeam = async (hackathonId, teamId, updateData, token) => {
+    const res = await API.put(`/register/${hackathonId}/teams/${teamId}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+};
