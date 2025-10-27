@@ -146,7 +146,8 @@
         "delete_failed": "Failed to delete hackathon",
         "hackathons": "Hackathons",
         "confirm_delete_title": "Delete Hackathon",
-        "confirm_delete_message": "Are you sure you want to delete \"{{name}}\"?"
+        "confirm_delete_message": "Are you sure you want to delete \"{{name}}\"?",
+        "details_fetch_failed": "Failed to fetch hackathon details"
     },
     "common": {
         "confirm_title": "Are you sure?",

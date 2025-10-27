@@ -80,7 +80,7 @@ const HackathonPage = () => {
             setDeleteDialogOpen(true);
         } catch (err) {
             console.error(err);
-            toast.error(t("hackathon.fetch_failed"));
+            toast.error(t("hackathon.delete_failed"));
         }
     };
 

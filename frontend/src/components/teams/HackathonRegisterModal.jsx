@@ -16,13 +16,14 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
 import { registerForHackathon } from "../../api/registrations";
-import { getPublicIdeas } from "../../api/ideas";
+import { getPublicIdeas, getUserIdeas } from "../../api/ideas";
 import { getUsers } from "../../api/users";
 import MemberSearchPicker from "./MemberSearchPicker";
 
 const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
     const { t } = useTranslation();
     const { token } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -40,23 +41,29 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
         const fetchData = async () => {
             try {
                 const [ideasRes, usersRes] = await Promise.all([
-                    getPublicIdeas(token),
+                    getUserIdeas(token),
                     getUsers(token),
                 ]);
 
-                setIdeas(ideasRes?.ideas || []);
+                // ✅ filter only the ideas created by this user
+                const userIdeas = (ideasRes?.ideas || []).filter(
+                    (idea) => idea.submitter === user?._id
+                );
+
+                setIdeas(userIdeas);
+
                 const allUsers = usersRes?.groupedUsers
                     ? Object.values(usersRes.groupedUsers).flat()
                     : [];
                 setUsers(allUsers);
             } catch (error) {
                 console.error(error);
-                toast.error(t("hackathon.fetch_failed") || "Failed to fetch data!");
+                toast.error(t("hackathon.details_fetch_failed") || "Failed to fetch data!");
             }
         };
 
         fetchData();
-    }, [hackathon, open, token, t]);
+    }, [hackathon, open, token, user, t]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

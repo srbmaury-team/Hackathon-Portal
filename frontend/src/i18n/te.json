@@ -140,7 +140,8 @@
         "deleted": "హ్యాకథాన్ విజయవంతంగా తొలగించబడింది",
         "delete_failed": "హ్యాకథాన్ తొలగించడం విఫలమైంది",
         "confirm_delete_title": "హ్యాకథాన్ తొలగించు",
-        "confirm_delete_message": "మీరు ఖచ్చితంగా \"{{name}}\"ను తొలగించాలనుకుంటున్నారా?"
+        "confirm_delete_message": "మీరు ఖచ్చితంగా \"{{name}}\"ను తొలగించాలనుకుంటున్నారా?",
+        "details_fetch_failed": "హ్యాకథాన్ వివరాలను పొందడంలో విఫలమైంది"
     },
     "registration": {
         "register_for": "కోసం నమోదు చేయండి",

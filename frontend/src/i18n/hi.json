@@ -140,7 +140,8 @@
         "deleted": "हैकथॉन सफलतापूर्वक हटाया गया",
         "delete_failed": "हैकथॉन हटाने में विफल",
         "confirm_delete_title": "हैकथॉन हटाएं",
-        "confirm_delete_message": "क्या आप वाकई \"{{name}}\" को हटाना चाहते हैं?"
+        "confirm_delete_message": "क्या आप वाकई \"{{name}}\" को हटाना चाहते हैं?",
+        "details_fetch_failed": "हैकथॉन विवरण लाने में विफल"
     },
     "registration": {
         "register_for": "के लिए पंजीकरण करें",
