@@ -8,6 +8,7 @@ import AnnouncementsPage from "../pages/AnnouncementsPage";
 import SettingsPage from "../pages/SettingsPage";
 import UserManagementPage from "../pages/UserManagementPage";
 import HackathonPage from "../pages/HackathonPage";
+import MyTeamsPage from "../pages/MyTeamsPage";
 
 const AppRoutes = () => {
     const { user } = useContext(AuthContext);
@@ -53,6 +54,12 @@ const AppRoutes = () => {
                     path="/hackathons"
                     element={
                         user ? <HackathonPage /> : <Navigate to="/" />
+                    }
+                />
+                <Route
+                    path="/my-teams"
+                    element={
+                        user ? <MyTeamsPage /> : <Navigate to="/" />
                     }
                 />
             </Routes>

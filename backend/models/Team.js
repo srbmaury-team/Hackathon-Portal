@@ -9,6 +9,11 @@ const teamSchema = new mongoose.Schema(
             required: true,
         },
         members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        leader: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            // leader is optional for backwards compatibility; registration will set it
+        },
         organization: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Organization",

@@ -148,6 +148,20 @@
         "confirm_delete_title": "Delete Hackathon",
         "confirm_delete_message": "Are you sure you want to delete \"{{name}}\"?",
         "details_fetch_failed": "Failed to fetch hackathon details"
+        ,
+        "withdraw": "Withdraw",
+        "withdraw_success": "Successfully withdrawn from hackathon",
+        "withdraw_failed": "Failed to withdraw from hackathon",
+        "name": "Hackathon"
+    },
+    "teams": {
+        "my_teams": "My Teams",
+        "fetch_failed": "Failed to fetch your teams"
+    },
+    "team": {
+        "name": "Team",
+        "idea": "Idea",
+        "members": "Members"
     },
     "common": {
         "confirm_title": "Are you sure?",

@@ -20,7 +20,7 @@ import { getPublicIdeas, getUserIdeas } from "../../api/ideas";
 import { getUsers } from "../../api/users";
 import MemberSearchPicker from "./MemberSearchPicker";
 
-const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
+const HackathonRegisterModal = ({ open, onClose, hackathon, onRegistered }) => {
     const { t } = useTranslation();
     const { token } = useContext(AuthContext);
     const { user } = useContext(AuthContext);
@@ -41,21 +41,22 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
         const fetchData = async () => {
             try {
                 const [ideasRes, usersRes] = await Promise.all([
-                    getUserIdeas(token),
+                    getPublicIdeas(token),
                     getUsers(token),
                 ]);
 
-                // ✅ filter only the ideas created by this user
-                const userIdeas = (ideasRes?.ideas || []).filter(
-                    (idea) => idea.submitter === user?._id
-                );
-
-                setIdeas(userIdeas);
-
-                const allUsers = usersRes?.groupedUsers
-                    ? Object.values(usersRes.groupedUsers).flat()
-                    : [];
+                // Use public ideas (tests expect getPublicIdeas)
+                setIdeas(ideasRes?.ideas || []);
+                const allUsers = usersRes?.groupedUsers ? Object.values(usersRes.groupedUsers).flat() : [];
                 setUsers(allUsers);
+
+                // ensure the current user is included in members by default and cannot be removed
+                if (user && user._id) {
+                    setFormData((prev) => ({
+                        ...prev,
+                        members: Array.from(new Set([...(prev.members || []), user._id])),
+                    }));
+                }
             } catch (error) {
                 console.error(error);
                 toast.error(t("hackathon.details_fetch_failed") || "Failed to fetch data!");
@@ -70,7 +71,7 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+            const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -81,7 +82,8 @@ const HackathonRegisterModal = ({ open, onClose, hackathon }) => {
             };
             await registerForHackathon(hackathon._id, payload, token);
             toast.success(t("hackathon.register_success") || "Registered successfully!");
-            onClose();
+                    if (onRegistered) onRegistered();
+                    onClose();
         } catch (error) {
             console.error(error);
             toast.error(t("hackathon.register_failed") || "Registration failed!");

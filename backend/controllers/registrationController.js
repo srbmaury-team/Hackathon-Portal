@@ -11,7 +11,14 @@ class RegistrationController {
     async register(req, res) {
         try {
             const { hackathonId } = req.params;
-            const { teamName, ideaId, memberIds } = req.body;
+            const { teamName, ideaId, memberIds: rawMemberIds } = req.body;
+
+            // Ensure memberIds is an array and include the requesting user
+            const memberIds = Array.isArray(rawMemberIds) ? [...rawMemberIds] : [];
+            // Add the current user as a member (and leader) if not already present
+            if (!memberIds.some((m) => String(m) === String(req.user._id))) {
+                memberIds.push(req.user._id);
+            }
 
             // Validate inputs
             if (!teamName || !ideaId || !Array.isArray(memberIds) || memberIds.length === 0) {
@@ -37,7 +44,7 @@ class RegistrationController {
                 return res.status(400).json({ message: req.__("registration.hackathon_closed") });
             }
 
-            // Validate team size
+            // Validate team size (including the current user)
             const size = memberIds.length;
             if (size < hackathon.mnimumTeamSize || size > hackathon.maximumTeamSize) {
                 return res.status(400).json({
@@ -64,11 +71,12 @@ class RegistrationController {
                 });
             }
 
-            // Create the team
+            // Create the team and set the registering user as leader
             const team = await Team.create({
                 name: teamName,
                 idea: ideaId,
                 members: memberIds,
+                leader: req.user._id,
                 organization: req.user.organization._id,
                 hackathon: hackathon._id,
             });
@@ -132,6 +140,53 @@ class RegistrationController {
     }
 
     /**
+     * Get current user's team for a hackathon
+     * @route GET /api/register/:hackathonId/my
+     * @access Private (Participants)
+     */
+    async getMyTeam(req, res) {
+        try {
+            const { hackathonId } = req.params;
+
+            const team = await Team.findOne({ hackathon: hackathonId, members: req.user._id })
+                .populate("idea", "title description")
+                .populate("members", "name email")
+                .populate("hackathon", "title")
+                .populate("organization", "name");
+
+            if (!team) {
+                return res.status(404).json({ message: req.__("registration.team_not_found") });
+            }
+
+            res.json({ team, message: req.__("registration.fetch_success") });
+        } catch (err) {
+            console.error("Get My Team Error:", err);
+            res.status(500).json({ message: req.__("registration.fetch_failed"), error: err.message });
+        }
+    }
+
+    /**
+     * Get all teams for the current user across hackathons
+     * @route GET /api/register/my-teams
+     * @access Private
+     */
+    async getMyTeams(req, res) {
+        try {
+            const teams = await Team.find({ members: req.user._id })
+                .populate("idea", "title description")
+                .populate("members", "name email")
+                .populate("hackathon", "title")
+                .populate("organization", "name")
+                .sort({ createdAt: -1 });
+
+            res.json({ teams, total: teams.length, message: req.__("registration.fetch_success") });
+        } catch (err) {
+            console.error("Get My Teams Error:", err);
+            res.status(500).json({ message: req.__("registration.fetch_failed"), error: err.message });
+        }
+    }
+
+    /**
      * Withdraw a team registration
      * @route DELETE /api/hackathons/:hackathonId/teams/:teamId
      * @access Private (Team Members or Organizer/Admin)
@@ -147,7 +202,7 @@ class RegistrationController {
 
             // Check hackathon ownership match
             if (String(team.hackathon) !== String(hackathonId)) {
-                return res.status(400).json({ message: req.__("registration.mismatch_hackathon") });
+                return res.status(400).json({ message: req.__("registration.mismatched_hackathon") });
             }
 
             // Access control

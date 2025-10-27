@@ -1,22 +1,22 @@
 {
 	"auth": {
 		"forbidden": "आपको यह कार्य करने की अनुमति नहीं है",
-		"organization_not_onboarded": "आपका संगठन ऑनबोर्ड नहीं हुआ है। कृपया व्यवस्थापक से संपर्क करें।",
-		"login_success": "लॉगिन सफल हुआ",
-		"google_login_failed": "Google प्रमाणीकरण असफल रहा",
+		"organization_not_onboarded": "आपका संगठन ऑनबोर्ड नहीं है। कृपया एडमिन से संपर्क करें।",
+		"login_success": "लॉगिन सफल रहा",
+		"google_login_failed": "गूगल प्रमाणीकरण विफल रहा",
 		"no_token": "कोई प्रमाणीकरण टोकन प्रदान नहीं किया गया",
 		"user_not_found": "उपयोगकर्ता नहीं मिला",
-		"invalid_token": "टोकन अमान्य या समाप्त हो गया है",
+		"invalid_token": "अमान्य या समाप्त टोकन",
 		"unauthorized": "आपको यह कार्य करने की अनुमति नहीं है",
-		"forbidden_role": "auth.forbidden_role"
+		"forbidden_role": "इस भूमिका के लिए अनुमति नहीं है"
 	},
 	"user": {
 		"not_found": "उपयोगकर्ता नहीं मिला",
 		"fetch_success": "उपयोगकर्ता सफलतापूर्वक प्राप्त किए गए",
-		"fetch_failed": "उपयोगकर्ताओं को प्राप्त करने में विफल",
-		"cannot_modify_admin": "प्रशासक की भूमिका को बदला नहीं जा सकता",
+		"fetch_failed": "उपयोगकर्ता प्राप्त करने में विफल",
+		"cannot_modify_admin": "एडमिन की भूमिका बदली नहीं जा सकती",
 		"role_updated_successfully": "उपयोगकर्ता की भूमिका सफलतापूर्वक अपडेट की गई",
-		"role_update_failed": "उपयोगकर्ता की भूमिका अपडेट करने में विफल"
+		"role_update_failed": "भूमिका अपडेट करने में विफल"
 	},
 	"announcement": {
 		"get_failed": "घोषणाएँ प्राप्त करने में विफल",
@@ -29,27 +29,27 @@
 		"delete_failed": "घोषणा हटाने में विफल"
 	},
 	"idea": {
-		"get_failed": "विचार प्राप्त करने में विफल",
+		"get_failed": "आइडियाज प्राप्त करने में विफल",
 		"organization_not_found": "संगठन नहीं मिला",
-		"submitted_successfully": "विचार सफलतापूर्वक जमा किया गया",
-		"submission_failed": "विचार जमा करने में विफल",
-		"get_my_failed": "आपके विचार प्राप्त करने में विफल",
-		"updated_successfully": "विचार सफलतापूर्वक अपडेट किया गया",
-		"update_failed": "विचार अपडेट करने में विफल",
-		"deleted_successfully": "विचार सफलतापूर्वक हटाया गया",
-		"delete_failed": "विचार हटाने में विफल",
-		"not_found": "विचार नहीं मिला"
+		"submitted_successfully": "आइडिया सफलतापूर्वक सबमिट किया गया",
+		"submission_failed": "आइडिया सबमिट करने में विफल",
+		"get_my_failed": "आपके आइडियाज प्राप्त करने में विफल",
+		"updated_successfully": "आइडिया सफलतापूर्वक अपडेट किया गया",
+		"update_failed": "आइडिया अपडेट करने में विफल",
+		"deleted_successfully": "आइडिया सफलतापूर्वक हटाया गया",
+		"delete_failed": "आइडिया हटाने में विफल",
+		"not_found": "आइडिया नहीं मिला"
 	},
 	"organization": {
 		"not_found": "संगठन नहीं मिला"
 	},
 	"hackathon": {
-		"validation_failed": "हैकाथॉन डेटा मान्यता विफल रही",
+		"validation_failed": "हैकाथॉन डेटा मान्यता विफल",
 		"created_successfully": "हैकाथॉन सफलतापूर्वक बनाया गया",
 		"creation_failed": "हैकाथॉन बनाने में विफल",
-		"fetch_success": "हैकाथॉन सफलतापूर्वक प्राप्त किए गए",
-		"fetch_failed": "हैकाथॉन प्राप्त करने में विफल",
-		"invalid_id": "अमान्य हैकाथॉन आईडी",
+		"fetch_success": "हैकाथॉन्स सफलतापूर्वक प्राप्त किए गए",
+		"fetch_failed": "हैकाथॉन्स प्राप्त करने में विफल",
+		"invalid_id": "अमान्य हैकाथॉन ID",
 		"not_found": "हैकाथॉन नहीं मिला",
 		"access_denied": "आपको यह कार्य करने की अनुमति नहीं है",
 		"access_denied_inactive": "निष्क्रिय हैकाथॉन के लिए पंजीकरण नहीं किया जा सकता",
@@ -59,18 +59,18 @@
 		"delete_failed": "हैकाथॉन हटाने में विफल"
 	},
 	"registration": {
-		"validation_failed": "पंजीकरण डेटा मान्यता विफल रही",
+		"validation_failed": "पंजीकरण डेटा मान्यता विफल",
 		"hackathon_closed": "हैकाथॉन पंजीकरण बंद है",
 		"invalid_team_size": "अमान्य टीम आकार",
-		"already_registered": "आप पहले से ही इस हैकाथॉन के लिए पंजीकृत हैं",
-		"success": "पंजीकरण सफल हुआ",
-		"failed": "हैकाथॉन के लिए पंजीकरण असफल रहा",
+		"already_registered": "आप पहले से इस हैकाथॉन में पंजीकृत हैं",
+		"success": "पंजीकरण सफल",
+		"failed": "हैकाथॉन के लिए पंजीकरण विफल",
 		"fetch_success": "पंजीकरण सफलतापूर्वक प्राप्त किए गए",
 		"fetch_failed": "पंजीकरण प्राप्त करने में विफल",
 		"team_not_found": "टीम नहीं मिली",
 		"mismatched_hackathon": "टीम इस हैकाथॉन से संबंधित नहीं है",
 		"access_denied": "आपको इस टीम को देखने की अनुमति नहीं है",
-		"withdraw_success": "हैकाथॉन से सफलतापूर्वक बाहर निकले",
-		"withdraw_failed": "हैकाथॉन से बाहर निकलने में विफल"
+		"withdraw_success": "हैकाथॉन से सफलतापूर्वक नाम वापस लिया गया",
+		"withdraw_failed": "नाम वापस लेने में विफल"
 	}
 }
