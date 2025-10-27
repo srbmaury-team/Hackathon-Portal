@@ -19,4 +19,19 @@ router.delete("/:hackathonId/teams/:teamId", protect, (req, res) =>
     registrationController.withdraw(req, res)
 );
 
+// Update a team registration (modify team details)
+router.put("/:hackathonId/teams/:teamId", protect, (req, res) =>
+    registrationController.update(req, res)
+);
+
+// Get current user's team for a hackathon
+router.get("/:hackathonId/my", protect, (req, res) =>
+    registrationController.getMyTeam(req, res)
+);
+
+// Get all teams for current user
+router.get("/my-teams", protect, (req, res) =>
+    registrationController.getMyTeams(req, res)
+);
+
 module.exports = router;

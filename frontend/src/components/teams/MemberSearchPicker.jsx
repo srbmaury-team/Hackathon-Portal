@@ -1,5 +1,5 @@
 // src/components/hackathons/MemberSearchPicker.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import {
     TextField,
     List,
@@ -48,7 +48,11 @@ class Trie {
 }
 // ----------------------------------------------------------
 
+import { AuthContext } from "../../context/AuthContext";
+
 const MemberSearchPicker = ({ users, selectedIds = [], onChange }) => {
+    const auth = useContext(AuthContext) || {};
+    const user = auth.user;
     const [query, setQuery] = useState("");
     const [filtered, setFiltered] = useState([]);
 
@@ -71,11 +75,14 @@ const MemberSearchPicker = ({ users, selectedIds = [], onChange }) => {
     };
 
     const handleToggle = (id) => {
+        // Prevent removing the current user from the team
+        if (selectedIds.includes(id) && String(id) === String(user?._id)) return;
+
         let updated;
         if (selectedIds.includes(id)) {
-            updated = selectedIds.filter((sid) => sid !== id); // ✅ remove id
+            updated = selectedIds.filter((sid) => sid !== id); // remove id
         } else {
-            updated = [...selectedIds, id]; // ✅ add id
+            updated = [...selectedIds, id]; // add id
         }
         onChange(updated);
     };
@@ -92,14 +99,15 @@ const MemberSearchPicker = ({ users, selectedIds = [], onChange }) => {
             />
 
             <List dense sx={{ maxHeight: 200, overflowY: "auto" }}>
-                {filtered.map((user) => (
-                    <ListItem key={user._id} button onClick={() => handleToggle(user._id)}>
+                {filtered.map((u) => (
+                    <ListItem key={u._id} button onClick={() => handleToggle(u._id)}>
                         <Checkbox
-                            checked={selectedIds.includes(user._id)}
+                            checked={selectedIds.includes(u._id)}
                             tabIndex={-1}
                             disableRipple
+                            disabled={String(u._id) === String(user?._id)}
                         />
-                        <ListItemText primary={user.name} secondary={user.email} />
+                        <ListItemText primary={u.name} secondary={u.email} />
                     </ListItem>
                 ))}
             </List>
@@ -107,12 +115,13 @@ const MemberSearchPicker = ({ users, selectedIds = [], onChange }) => {
             {selectedIds.length > 0 && (
                 <Stack direction="row" spacing={1} flexWrap="wrap">
                     {selectedIds.map((id) => {
-                        const u = users.find((x) => x._id === id);
+                        const u = users.find((x) => x._id === id) || { _id: id, name: "Unknown" };
+                        const isCurrentUser = String(id) === String(user?._id);
                         return (
                             <Chip
                                 key={id}
-                                label={u?.name || "Unknown"}
-                                onDelete={() => handleToggle(id)}
+                                label={isCurrentUser ? `${u.name} (You)` : u.name}
+                                onDelete={isCurrentUser ? undefined : () => handleToggle(id)}
                                 size="small"
                             />
                         );

@@ -140,7 +140,23 @@
         "deleted": "हैकथॉन सफलतापूर्वक हटाया गया",
         "delete_failed": "हैकथॉन हटाने में विफल",
         "confirm_delete_title": "हैकथॉन हटाएं",
-        "confirm_delete_message": "क्या आप वाकई \"{{name}}\" को हटाना चाहते हैं?"
+        "confirm_delete_message": "क्या आप वाकई \"{{name}}\" को हटाना चाहते हैं?",
+        "details_fetch_failed": "हैकथॉन विवरण लाने में विफल"
+        ,
+        "withdraw": "निकालें",
+        "withdraw_success": "हैकाथॉन से सफलतापूर्वक बाहर निकले",
+        "update_success": "सफलतापूर्वक अपडेट किया गया",
+        "withdraw_failed": "हैकाथॉन से बाहर निकलने में विफल",
+        "name": "हैकाथॉन"
+    },
+    "teams": {
+        "my_teams": "मेरी टीमें",
+        "fetch_failed": "आपकी टीमें लाने में विफल"
+    },
+    "team": {
+        "name": "टीम",
+        "idea": "विचार",
+        "members": "सदस्य"
     },
     "registration": {
         "register_for": "के लिए पंजीकरण करें",
@@ -153,6 +169,7 @@
         "failed": "पंजीकरण असफल रहा"
     },
     "common": {
+        "edit": "संपादित करें",
         "cancel": "रद्द करें",
         "delete": "हटाएं",
         "loading": "लोड हो रहा है...",

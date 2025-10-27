@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     Box,
     Paper,
@@ -15,8 +15,10 @@ import {
     TableCell,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import toast from "react-hot-toast";
+import { getMyTeam, withdrawTeam } from "../../api/registrations";
 import dayjs from "dayjs";
 import MarkdownViewer from "../common/MarkdownViewer";
 import RegisterTeamModal from "../teams/HackathonRegisterModal"; // 👈 Import modal
@@ -24,10 +26,42 @@ import RegisterTeamModal from "../teams/HackathonRegisterModal"; // 👈 Import 
 const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
+    const token = localStorage.getItem("token");
     const theme = useTheme();
     const colorScheme = theme.palette.mode === "dark" ? "dark" : "light";
 
     const [openRegister, setOpenRegister] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(false);
+    const [myTeam, setMyTeam] = useState(null);
+    const [loadingWithdraw, setLoadingWithdraw] = useState(false);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchMyTeam = async () => {
+            if (!user || !hackathon) return;
+            try {
+                const res = await getMyTeam(hackathon._id, token);
+                if (!mounted) return;
+                if (res?.team) {
+                    setIsRegistered(true);
+                    setMyTeam(res.team);
+                } else {
+                    setIsRegistered(false);
+                    setMyTeam(null);
+                }
+            } catch (err) {
+                // if 404, user not registered — that's expected
+                if (err?.response?.status === 404) {
+                    setIsRegistered(false);
+                    setMyTeam(null);
+                } else {
+                    console.error("fetchMyTeam error", err);
+                }
+            }
+        };
+        fetchMyTeam();
+        return () => (mounted = false);
+    }, [hackathon, user, token]);
 
     const showDate =
         hackathon.createdAt === hackathon.updatedAt
@@ -105,14 +139,49 @@ const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
                             </>
                         )}
                         {user.role === "participant" && (
-                            <Button
-                                variant="contained"
-                                size="small"
-                                sx={{ mt: 1 }}
-                                onClick={() => setOpenRegister(true)}
-                            >
-                                {t("hackathon.register")}
-                            </Button>
+                            !isRegistered ? (
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    sx={{ mt: 1 }}
+                                    onClick={() => setOpenRegister(true)}
+                                >
+                                    {t("hackathon.register")}
+                                </Button>
+                                    ) : (
+                                <>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        sx={{ mt: 1 }}
+                                        onClick={() => setOpenRegister(true)}
+                                    >
+                                        {t("hackathon.edit") || "Edit"}
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        color="error"
+                                        sx={{ mt: 1 }}
+                                        onClick={async () => {
+                                            try {
+                                                setLoadingWithdraw(true);
+                                                await withdrawTeam(hackathon._id, myTeam._id, token);
+                                                setIsRegistered(false);
+                                                setMyTeam(null);
+                                                toast.success(t("hackathon.withdraw_success") || "Withdrawn successfully");
+                                            } catch (err) {
+                                                console.error(err);
+                                                toast.error(t("hackathon.withdraw_failed") || "Withdraw failed");
+                                            } finally {
+                                                setLoadingWithdraw(false);
+                                            }
+                                        }}
+                                    >
+                                        {loadingWithdraw ? t("common.loading") : t("hackathon.withdraw")}
+                                    </Button>
+                                </>
+                            )
                         )}
                     </Stack>
                 </CardContent>
@@ -123,6 +192,18 @@ const HackathonItem = ({ hackathon, onEdit, onDelete }) => {
                 open={openRegister}
                 onClose={() => setOpenRegister(false)}
                 hackathon={hackathon}
+                team={myTeam}
+                onRegistered={async () => {
+                    try {
+                        const res = await getMyTeam(hackathon._id, token);
+                        if (res?.team) {
+                            setIsRegistered(true);
+                            setMyTeam(res.team);
+                        }
+                    } catch (err) {
+                        // ignore
+                    }
+                }}
             />
         </>
     );
