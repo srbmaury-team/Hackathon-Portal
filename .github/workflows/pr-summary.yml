@@ -1,3 +1,30 @@
+name: PR Summary Generator
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main || echo "No main branch found"
+
+      - name: Generate diff
+        run: |
+          if git rev-parse --verify origin/main >/dev/null 2>&1; then
+            git diff origin/main...HEAD > changes.diff
+          else
+            echo "No common base with main, generating full diff"
+            git diff > changes.diff
+          fi
+
       - name: Generate and Post PR Summary
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -13,7 +40,7 @@
             model: "gpt-5",
             messages: [
               {role: "system", content: "You are a helpful AI that summarizes GitHub pull requests clearly and concisely."},
-              {role: "user", content: ("Summarize these PR changes in 3–5 bullet points:\n\n\($diff)" | fromjson? // "Summarize these PR changes in 3–5 bullet points:\n\n" + $diff)}
+              {role: "user", content: ("Summarize these PR changes in 3–5 bullet points:\n\n\($diff)")}
             ]
           }')
 
