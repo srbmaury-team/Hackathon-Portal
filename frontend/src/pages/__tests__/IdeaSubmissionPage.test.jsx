@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi, describe, it, beforeEach, expect } from "vitest";
 import IdeaSubmissionPage from "../IdeaSubmissionPage";
-import * as api from "../../api/api";
+import * as api from "../../api/ideas";
 
 // Mock i18n
 vi.mock("react-i18next", () => ({
@@ -10,7 +10,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 // Mock API
-vi.mock("../../api/api", () => ({
+vi.mock("../../api/ideas", () => ({
   getUserIdeas: vi.fn(),
 }));
 

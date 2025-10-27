@@ -43,7 +43,6 @@ class HackathonController {
                 isActive: isActive !== undefined ? isActive : true,
                 organization: req.user.organization._id,
                 createdBy: req.user._id,
-                teams: [],
                 rounds: roundIds,
             });
 
@@ -84,7 +83,6 @@ class HackathonController {
             // Fetch hackathons with populated fields
             const hackathons = await Hackathon.find(filter)
                 .populate("createdBy", "name email")
-                .populate("teams", "name members")
                 .populate("rounds", "name description startDate endDate isActive")
                 .sort({ createdAt: -1 });
 
@@ -122,7 +120,6 @@ class HackathonController {
             const hackathon = await Hackathon.findById(id)
                 .populate("createdBy", "name email")
                 .populate("organization", "name domain")
-                .populate("teams", "name members")
                 .populate("rounds", "name description startDate endDate isActive");
 
             if (!hackathon) {
@@ -252,7 +249,6 @@ class HackathonController {
             const updatedHackathon = await Hackathon.findById(hackathon._id)
                 .populate("createdBy", "name email")
                 .populate("organization", "name domain")
-                .populate("teams", "name members")
                 .populate("rounds", "name description startDate endDate isActive");
 
             res.json({

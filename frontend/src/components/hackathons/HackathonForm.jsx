@@ -67,8 +67,6 @@ const HackathonForm = ({ onSubmit, initialData }) => {
             rounds: formattedRounds,
         };
 
-        console.log("Submitting hackathon payload:", JSON.stringify(payload, null, 2));
-
         try {
             await onSubmit(payload);
             toast.success(initialData ? t("hackathon.updated") : t("hackathon.created"));
@@ -83,7 +81,7 @@ const HackathonForm = ({ onSubmit, initialData }) => {
     };
 
     return (
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+        <Paper data-testid="hackathon-form" elevation={3} sx={{ p: 4, borderRadius: 3 }}>
             <Typography variant="h5" fontWeight={600}>
                 {initialData ? t("hackathon.edit_hackathon") : t("hackathon.create_hackathon")}
             </Typography>
@@ -94,9 +92,9 @@ const HackathonForm = ({ onSubmit, initialData }) => {
                     label={t("hackathon.title")}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    inputProps={{ "aria-label": "Hackathon Title" }}
                 />
 
-                {/* Markdown Editor for description */}
                 <div data-color-mode={colorScheme}>
                     <Typography variant="subtitle1" sx={{ mb: 1 }}>
                         {t("hackathon.description")}
@@ -106,6 +104,7 @@ const HackathonForm = ({ onSubmit, initialData }) => {
                         onChange={setDescription}
                         height={300}
                         preview="edit"
+                        textareaProps={{ "data-testid": "md-editor", "aria-label": "Hackathon Description" }}
                     />
                 </div>
 
@@ -119,7 +118,7 @@ const HackathonForm = ({ onSubmit, initialData }) => {
                 </Typography>
 
                 {rounds.map((round, index) => (
-                    <Paper key={index} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+                    <Paper data-testid="round-container" key={index} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item xs={12} sm={6}>
                                 <TextField

@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import MDEditor from "@uiw/react-md-editor";
 import MarkdownViewer from "../common/MarkdownViewer";
 import toast from "react-hot-toast";
-import { updateAnnouncement, deleteAnnouncement } from "../../api/api";
+import { updateAnnouncement, deleteAnnouncement } from "../../api/announcements";
 import { useTranslation } from "react-i18next";
 
 const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
@@ -77,7 +77,6 @@ const AnnouncementItem = ({ announcement, user, onUpdated, onDeleted }) => {
                         {t("announcement.edit_announcement")}
                     </Typography>
                     <TextField
-                        label={t("announcement.title")}
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
                         fullWidth

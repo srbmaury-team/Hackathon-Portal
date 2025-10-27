@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import RoleAccordion from "../components/members/RoleAccordion";
 import { useTranslation } from "react-i18next";
-import { getUsers, updateUserRole } from "../api/api";
+import { getUsers, updateUserRole } from "../api/users";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 const UserManagementPage = () => {

@@ -5,6 +5,8 @@ const hackathonSchema = new mongoose.Schema(
         title: { type: String, required: true },
         description: { type: String, required: true },
         isActive: { type: Boolean, default: true },
+        mnimumTeamSize: { type: Number, default: 1 },
+        maximumTeamSize: { type: Number, default: 5 },
         organization: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Organization",
@@ -14,10 +16,6 @@ const hackathonSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
-        teams: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Team",
-        }],
         rounds: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Round",

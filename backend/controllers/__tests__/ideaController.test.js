@@ -155,7 +155,7 @@ describe("IdeaController", () => {
       .send({ title: "Hack", description: "Try", isPublic: false });
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe("idea.update_failed"); // updated to match API
+    expect(res.body.message).toBe("Failed to update idea"); // updated to match API
   });
 
   it("should not delete another user's idea", async () => {
@@ -180,7 +180,7 @@ describe("IdeaController", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe("idea.delete_failed"); // updated to match API
+    expect(res.body.message).toBe("Failed to delete idea"); // updated to match API
   });
 
   it("should delete user's own idea", async () => {
@@ -197,7 +197,7 @@ describe("IdeaController", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe("idea.deleted_successfully");
+    expect(res.body.message).toBe("Idea deleted successfully");
     // Ensure it's actually removed from DB
     const dbIdea = await Idea.findById(idea._id);
     expect(dbIdea).toBeNull();

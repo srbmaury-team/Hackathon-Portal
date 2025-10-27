@@ -11,9 +11,6 @@ class AuthController {
         try {
             const { token } = req.body;
 
-            // ✅ get translation function from req (not res)
-            const t = req.__;
-            
             // Verify Google token
             const ticket = await client.verifyIdToken({
                 idToken: token,
@@ -31,7 +28,7 @@ class AuthController {
             if (!organization) {
                 if (!email.startsWith(adminEmail)) {
                     return res.status(403).json({
-                        message: t("auth.organization_not_onboarded"),
+                        message: req.__("auth.organization_not_onboarded"),
                     });
                 }
 
@@ -75,7 +72,7 @@ class AuthController {
             res.json({
                 user,
                 token: jwtToken,
-                message: t("auth.login_success"),
+                message: req.__("auth.login_success"),
             });
         } catch (err) {
             console.error("Google Login Error:", err);

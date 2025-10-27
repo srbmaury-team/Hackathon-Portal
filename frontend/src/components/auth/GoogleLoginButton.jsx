@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import { googleLogin } from "../../api/api"; // updated import
+import { googleLogin } from "../../api/auth"; // updated import
 import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
