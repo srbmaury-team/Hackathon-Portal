@@ -6,12 +6,14 @@ import { AuthContext } from "../../context/AuthContext";
 import * as api from "../../api/hackathons";
 import toast from "react-hot-toast";
 
-// Mock i18n
-vi.mock("react-i18next", () => ({
-    useTranslation: () => ({
-        t: (key) => key,
-    }),
-}));
+// Mock i18n but preserve other exports (like initReactI18next) so i18n initialization works
+vi.mock("react-i18next", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useTranslation: () => ({ t: (key) => key }),
+    };
+});
 
 // Mock react-hot-toast
 vi.mock("react-hot-toast", () => ({
@@ -240,7 +242,8 @@ describe("HackathonPage", () => {
     describe("Delete Hackathon", () => {
         it("calls deleteHackathon with confirmation and refreshes list", async () => {
             api.deleteHackathon.mockResolvedValue({ success: true });
-            window.confirm = vi.fn(() => true);
+            // Ensure getHackathonById returns the hackathon so the ConfirmDialog opens
+            api.getHackathonById = vi.fn().mockResolvedValue({ hackathon: mockHackathons[0] });
 
             renderWithUser("admin");
 
@@ -251,15 +254,19 @@ describe("HackathonPage", () => {
             const deleteButtons = screen.getAllByText("Delete");
             deleteButtons[0].click();
 
+            // Confirm dialog should open with confirm button text 'common.delete'
+            const confirmBtn = await screen.findByText("common.delete");
+            confirmBtn.click();
+
             await waitFor(() => {
-                expect(window.confirm).toHaveBeenCalledWith("hackathon.confirm_delete");
                 expect(api.deleteHackathon).toHaveBeenCalledWith("1", mockToken);
                 expect(api.getAllHackathons).toHaveBeenCalledTimes(2); // Once on mount, once after delete
             });
         });
 
         it("does not delete hackathon when user cancels confirmation", async () => {
-            window.confirm = vi.fn(() => false);
+            // Ensure getHackathonById returns the hackathon so the ConfirmDialog opens
+            api.getHackathonById = vi.fn().mockResolvedValue({ hackathon: mockHackathons[0] });
 
             renderWithUser("admin");
 
@@ -270,9 +277,9 @@ describe("HackathonPage", () => {
             const deleteButtons = screen.getAllByText("Delete");
             deleteButtons[0].click();
 
-            await waitFor(() => {
-                expect(window.confirm).toHaveBeenCalledWith("hackathon.confirm_delete");
-            });
+            // Cancel via confirm dialog
+            const cancelBtn = await screen.findByText("common.cancel");
+            cancelBtn.click();
 
             expect(api.deleteHackathon).not.toHaveBeenCalled();
             expect(api.getAllHackathons).toHaveBeenCalledTimes(1); // Only on mount
