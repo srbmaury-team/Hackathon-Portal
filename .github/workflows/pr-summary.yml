@@ -1,82 +1,132 @@
-name: PR Summary Generator
+name: 🧠 PR Summary Generator
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-permissions:
-  contents: read
-  pull-requests: write
-
 jobs:
   summarize:
+    name: Generate PR Summary
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
-      - name: Checkout repository
+      - name: 🛠️ Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # <-- important! ensures full git history
 
-      - name: Generate diff safely
+      - name: 🔄 Ensure main branch is available
         run: |
-          echo "Fetching main branch..."
-          git fetch origin main || echo "⚠️ No main branch found on origin"
+          git fetch origin main
+          echo "✅ Main branch fetched."
 
-          echo "Finding merge base..."
-          MERGE_BASE=$(git merge-base origin/main HEAD 2>/dev/null || echo "")
-          if [ -z "$MERGE_BASE" ]; then
-            echo "⚠️ No common base with main — generating full diff instead."
-            git diff > changes.diff
-          else
-            echo "✅ Found merge base: $MERGE_BASE"
-            git diff "$MERGE_BASE"...HEAD > changes.diff
-          fi
+      - name: 📊 Get changed files statistics
+        id: file-stats
+        run: |
+          BASE_BRANCH=$(git merge-base origin/main HEAD || echo "origin/main")
+          
+          # Get list of changed files with status
+          git diff --name-status $BASE_BRANCH > file-changes.txt
+          
+          # Get detailed diff
+          git diff $BASE_BRANCH > changes.diff
+          
+          # Count changes
+          FILES_CHANGED=$(wc -l < file-changes.txt | tr -d ' ')
+          ADDITIONS=$(git diff --numstat $BASE_BRANCH | awk '{sum+=$1} END {print sum}')
+          DELETIONS=$(git diff --numstat $BASE_BRANCH | awk '{sum+=$2} END {print sum}')
+          
+          echo "FILES_CHANGED=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          echo "ADDITIONS=$ADDITIONS" >> $GITHUB_OUTPUT
+          echo "DELETIONS=$DELETIONS" >> $GITHUB_OUTPUT
+          
+          echo "✅ Statistics gathered: $FILES_CHANGED files, +$ADDITIONS/-$DELETIONS"
 
-          echo "Generated diff size: $(wc -c < changes.diff) bytes"
+      - name: 📋 Prepare file changes list
+        id: file-list
+        run: |
+          echo "FILE_LIST<<EOF" >> $GITHUB_OUTPUT
+          cat file-changes.txt | while read status file; do
+            case $status in
+              A) echo "- 🆕 **Added:** \`$file\`" ;;
+              M) echo "- ✏️ **Modified:** \`$file\`" ;;
+              D) echo "- 🗑️ **Deleted:** \`$file\`" ;;
+              R*) echo "- 🔄 **Renamed:** \`$file\`" ;;
+              *) echo "- 📝 **Changed:** \`$file\`" ;;
+            esac
+          done >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Generate and Post PR Summary
+      - name: 🤖 Generate AI-Powered Bulletwise Summary
+        id: ai-summary
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          echo "🧠 Generating detailed bulletwise analysis..."
+          
+          # Escape and prepare diff for JSON
+          DIFF_CONTENT=$(head -c 15000 changes.diff | jq -Rs .)
+          
+          SUMMARY=$(curl -s https://api.openai.com/v1/chat/completions \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -d '{
+              "model": "gpt-4",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are an expert code reviewer. Analyze git diffs and provide clear, structured bullet points explaining the changes. Focus on: 1) What changed 2) Why it matters 3) Impact on the codebase. Use emojis for better readability."
+                },
+                {
+                  "role": "user",
+                  "content": "Analyze this PR diff and provide a detailed bulletwise explanation:\n\n## Instructions:\n- Start with a brief overview\n- List key changes as bullet points (use sub-bullets for details)\n- Highlight any breaking changes or important notes\n- Mention testing additions/changes\n- Note documentation updates\n\n## Diff:\n'"$DIFF_CONTENT"'"
+                }
+              ],
+              "temperature": 0.3,
+              "max_tokens": 1500
+            }' | jq -r '.choices[0].message.content // "Failed to generate summary"')
+          
+          echo "SUMMARY<<EOF" >> $GITHUB_OUTPUT
+          echo "$SUMMARY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "✅ AI Summary generated"
+
+      - name: 💬 Post PR Comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          echo "🧠 Generating summary using OpenAI..."
-
-          DIFF_CONTENT=$(head -c 12000 changes.diff | jq -Rs .)
-          REQUEST_BODY=$(jq -n --arg diff "$DIFF_CONTENT" '{
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "system",
-                content: "You are a helpful assistant that summarizes GitHub pull requests clearly and concisely."
-              },
-              {
-                role: "user",
-                content: ("Summarize the following PR diff in 3–5 concise bullet points:\n\n" + $diff)
-              }
-            ]
-          }')
-
-          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
-            -d "$REQUEST_BODY")
-
-          SUMMARY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
-
-          if [ -z "$SUMMARY" ]; then
-            echo "❌ Failed to generate summary."
-            echo "$RESPONSE"
-            exit 1
-          fi
-
-          echo "✅ Summary generated successfully."
-          echo "$SUMMARY"
-
-          echo "💬 Posting summary as PR comment..."
-          curl -s -H "Authorization: token $GH_PAT" \
-            -X POST \
-            -d "{\"body\": \"### 🤖 AI Summary\n\n$SUMMARY\"}" \
-            "https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
+          # Build the comment body
+          cat << 'COMMENT_EOF' > comment.md
+          ## 🤖 Automated PR Analysis
+          
+          ### 📊 Change Statistics
+          - **Files Changed:** ${{ steps.file-stats.outputs.FILES_CHANGED }}
+          - **Lines Added:** +${{ steps.file-stats.outputs.ADDITIONS }}
+          - **Lines Deleted:** -${{ steps.file-stats.outputs.DELETIONS }}
+          
+          ---
+          
+          ### 📁 Files Changed
+          ${{ steps.file-list.outputs.FILE_LIST }}
+          
+          ---
+          
+          ### 🔍 AI-Generated Summary
+          ${{ steps.ai-summary.outputs.SUMMARY }}
+          
+          ---
+          
+          <sub>🤖 This summary was automatically generated by AI. Review carefully and use your judgment.</sub>
+          COMMENT_EOF
+          
+          # Post the comment
+          gh pr comment $PR_NUMBER --body-file comment.md
+          
+          echo "💬 Bulletwise summary posted to PR #$PR_NUMBER"
